@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../models/note.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import '../core/theme/app_theme.dart';
 import '../widgets/glass_container.dart';
 import '../widgets/magical_text.dart';
 

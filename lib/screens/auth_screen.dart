@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
+import '../core/theme/app_theme.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
 import '../widgets/glass_container.dart';
 import '../widgets/magical_text.dart';
 
@@ -88,15 +88,15 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       children: [
         // Floating orbs
         Positioned(
-          top: 100,
-          right: 50,
-          child:
-              AnimatedBuilder(
-                    animation: _floatingController,
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: Offset(0, _floatingController.value * 20),
-                        child: Container(
+          top: 80,
+          right: 20,
+          child: AnimatedBuilder(
+            animation: _floatingController,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(0, _floatingController.value * 20),
+                child:
+                    Container(
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
@@ -110,26 +110,26 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    },
-                  )
-                  .animate(onPlay: (controller) => controller.repeat())
-                  .shimmer(duration: 2000.ms),
+                        )
+                        .animate(onPlay: (controller) => controller.repeat())
+                        .shimmer(duration: 2000.ms, padding: 20),
+              );
+            },
+          ),
         ),
 
         Positioned(
           top: 200,
           left: 30,
-          child:
-              AnimatedBuilder(
-                    animation: _floatingController,
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: Offset(0, -_floatingController.value * 15),
-                        child: Container(
-                          width: 60,
-                          height: 60,
+          child: AnimatedBuilder(
+            animation: _floatingController,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(0, -_floatingController.value * 15),
+                child:
+                    Container(
+                          width: 65,
+                          height: 65,
                           decoration: BoxDecoration(
                             gradient: AppTheme.golden,
                             shape: BoxShape.circle,
@@ -141,15 +141,15 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    },
-                  )
-                  .animate(
-                    delay: 500.ms,
-                    onPlay: (controller) => controller.repeat(),
-                  )
-                  .shimmer(duration: 2500.ms),
+                        )
+                        .animate(
+                          delay: 500.ms,
+                          onPlay: (controller) => controller.repeat(),
+                        )
+                        .shimmer(duration: 2500.ms, padding: 10),
+              );
+            },
+          ),
         ),
 
         Positioned(
@@ -185,36 +185,39 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   Widget _buildAuthForm() {
     return GlassContainer(
           padding: const EdgeInsets.all(32),
-          child: Column(
-            children: [
-              // Toggle buttons
-              _buildToggleButtons(),
+          child: AnimatedContainer(
+            duration: 700.ms,
+            curve: Curves.fastOutSlowIn,
 
-              const SizedBox(height: 32),
+            child: Column(
+              key: ValueKey(_isLogin),
+              children: [
+                // Toggle buttons
+                _buildToggleButtons(),
+                const SizedBox(height: 32),
 
-              // Email field
-              _buildEmailField(),
-
-              const SizedBox(height: 20),
-
-              // Password field
-              _buildPasswordField(),
-
-              if (!_isLogin) ...[
+                // Email field
+                _buildEmailField(),
                 const SizedBox(height: 20),
-                _buildConfirmPasswordField(),
+
+                // Password field
+                _buildPasswordField(),
+
+                if (!_isLogin) ...[
+                  const SizedBox(height: 20),
+                  _buildConfirmPasswordField(),
+                ],
+
+                const SizedBox(height: 32),
+
+                // Submit button
+                _buildSubmitButton(),
+                const SizedBox(height: 24),
+
+                // Demo button
+                _buildDemoButton(),
               ],
-
-              const SizedBox(height: 32),
-
-              // Submit button
-              _buildSubmitButton(),
-
-              const SizedBox(height: 24),
-
-              // Demo button
-              _buildDemoButton(),
-            ],
+            ),
           ),
         )
         .animate()

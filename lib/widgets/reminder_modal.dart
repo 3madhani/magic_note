@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../models/reminder_data.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import '../core/theme/app_theme.dart';
 import '../widgets/glass_container.dart';
 
 class ReminderModal extends StatefulWidget {

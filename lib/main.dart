@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'screens/app_screen.dart';
 import 'providers/app_provider.dart';
-import 'theme/app_theme.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
