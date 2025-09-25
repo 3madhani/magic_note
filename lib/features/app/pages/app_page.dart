@@ -3,10 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/widgets/reminder_modal.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';
+
+import '../../auth/presentation/cubit/auth_state.dart';
 import '../../auth/presentation/pages/auth_page.dart';
-import '../../notes/presentation/pages/home_page.dart';
-import '../../notes/presentation/pages/note_editor_page.dart';
-import '../../settings/presentation/pages/settings_page.dart';
 import '../cubit/app_cubit.dart';
 import '../cubit/app_state.dart';
 
