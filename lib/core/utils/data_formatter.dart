@@ -1,4 +1,4 @@
-class DateFormatter {
+class AppDateFormatter {
   static String formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);

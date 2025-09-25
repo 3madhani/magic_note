@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/reminder_data.dart';
 import '../../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import '../constants/theme_constants.dart';
 import 'glass_container.dart';
 
 class ReminderModal extends StatefulWidget {
@@ -129,13 +129,13 @@ class _ReminderModalState extends State<ReminderModal>
           child: ElevatedButton(
             onPressed: _saveReminder,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.goldenColor,
+              backgroundColor: ThemeConstants.goldenColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 8,
-              shadowColor: AppTheme.goldenColor.withOpacity(0.3),
+              shadowColor: ThemeConstants.goldenColor.withOpacity(0.3),
             ),
             child: const Text(
               'Set Reminder ✨',
@@ -178,7 +178,7 @@ class _ReminderModalState extends State<ReminderModal>
               children: [
                 Icon(
                   Icons.calendar_today,
-                  color: AppTheme.goldenColor,
+                  color: ThemeConstants.goldenColor,
                   size: 20,
                 ),
 
@@ -210,7 +210,7 @@ class _ReminderModalState extends State<ReminderModal>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            gradient: AppTheme.golden,
+            gradient: ThemeConstants.golden,
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(
@@ -272,7 +272,7 @@ class _ReminderModalState extends State<ReminderModal>
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppTheme.goldenColor.withOpacity(0.2)
+                        ? ThemeConstants.goldenColor.withOpacity(0.2)
                         : null,
                     borderRadius: isLast
                         ? const BorderRadius.only(
@@ -302,11 +302,11 @@ class _ReminderModalState extends State<ReminderModal>
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: isSelected
-                                ? AppTheme.goldenColor
+                                ? ThemeConstants.goldenColor
                                 : Colors.white.withOpacity(0.5),
                             width: 2,
                           ),
-                          color: isSelected ? AppTheme.goldenColor : null,
+                          color: isSelected ? ThemeConstants.goldenColor : null,
                         ),
                         child: isSelected
                             ? const Icon(
@@ -369,7 +369,11 @@ class _ReminderModalState extends State<ReminderModal>
             ),
             child: Row(
               children: [
-                Icon(Icons.access_time, color: AppTheme.goldenColor, size: 20),
+                Icon(
+                  Icons.access_time,
+                  color: ThemeConstants.goldenColor,
+                  size: 20,
+                ),
 
                 const SizedBox(width: 12),
 
@@ -428,7 +432,7 @@ class _ReminderModalState extends State<ReminderModal>
         content: Text(
           'Reminder set for ${DateFormat('MMM d').format(_selectedDate)} at ${_selectedTime.format(context)} ✨',
         ),
-        backgroundColor: AppTheme.goldenColor,
+        backgroundColor: ThemeConstants.goldenColor,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -445,7 +449,7 @@ class _ReminderModalState extends State<ReminderModal>
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(
               context,
-            ).colorScheme.copyWith(primary: AppTheme.goldenColor),
+            ).colorScheme.copyWith(primary: ThemeConstants.goldenColor),
           ),
           child: child!,
         );
@@ -466,7 +470,7 @@ class _ReminderModalState extends State<ReminderModal>
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(
               context,
-            ).colorScheme.copyWith(primary: AppTheme.goldenColor),
+            ).colorScheme.copyWith(primary: ThemeConstants.goldenColor),
           ),
           child: child!,
         );

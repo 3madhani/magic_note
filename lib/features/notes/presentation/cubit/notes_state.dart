@@ -1,16 +1,26 @@
 import 'package:equatable/equatable.dart';
+
 import '../../domain/entities/note.dart';
 
-abstract class NotesState extends Equatable {
-  const NotesState();
+class NoteOperationSuccess extends NotesState {
+  final String message;
+
+  const NoteOperationSuccess(this.message);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [message];
+}
+
+class NotesError extends NotesState {
+  final String message;
+
+  const NotesError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }
 
 class NotesInitial extends NotesState {}
-
-class NotesLoading extends NotesState {}
 
 class NotesLoaded extends NotesState {
   final List<Note> notes;
@@ -25,6 +35,14 @@ class NotesLoaded extends NotesState {
     this.selectedCategory = 'All',
   });
 
+  @override
+  List<Object?> get props => [
+    notes,
+    filteredNotes,
+    searchQuery,
+    selectedCategory,
+  ];
+
   NotesLoaded copyWith({
     List<Note>? notes,
     List<Note>? filteredNotes,
@@ -38,30 +56,13 @@ class NotesLoaded extends NotesState {
       selectedCategory: selectedCategory ?? this.selectedCategory,
     );
   }
-
-  @override
-  List<Object?> get props => [
-    notes,
-    filteredNotes,
-    searchQuery,
-    selectedCategory,
-  ];
 }
 
-class NotesError extends NotesState {
-  final String message;
+class NotesLoading extends NotesState {}
 
-  const NotesError(this.message);
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class NoteOperationSuccess extends NotesState {
-  final String message;
-
-  const NoteOperationSuccess(this.message);
+abstract class NotesState extends Equatable {
+  const NotesState();
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [];
 }

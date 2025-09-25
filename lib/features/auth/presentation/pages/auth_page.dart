@@ -20,7 +20,6 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLogin = true;
-  final bool _isLoading = false;
   bool _obscurePassword = true;
 
   late AnimationController _floatingController;
