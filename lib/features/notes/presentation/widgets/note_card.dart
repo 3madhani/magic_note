@@ -36,6 +36,8 @@ class NoteCard extends StatelessWidget {
             : ThemeConstants.noteColors[note.color] ??
                   ThemeConstants.noteColors['yellow']!;
 
+        final textTheme = Theme.of(context).textTheme;
+
         return GestureDetector(
               onTap: onTap,
               child: MagicalContainer(
@@ -44,26 +46,26 @@ class NoteCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: noteGradient.colors.first.withOpacity(0.3),
+                    color: isDarkMode
+                        ? Colors.black.withOpacity(0.4)
+                        : noteGradient.colors.first.withOpacity(0.3),
                     blurRadius: 10,
-                    offset: const Offset(0, 0),
+                    offset: const Offset(0, 2),
                   ),
                 ],
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// Title + Reminder
                     Row(
                       children: [
                         Expanded(
                           child: Text(
                             note.title,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: isDarkMode
-                                      ? Colors.white
-                                      : Colors.black87,
-                                ),
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: isDarkMode ? Colors.white : Colors.black87,
+                            ),
                           ),
                         ),
                         if (note.hasReminder)
@@ -71,7 +73,7 @@ class NoteCard extends StatelessWidget {
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
                               color: ThemeConstants.goldenColor.withOpacity(
-                                0.2,
+                                0.15,
                               ),
                               borderRadius: BorderRadius.circular(6),
                             ),
@@ -84,17 +86,21 @@ class NoteCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
+
+                    /// Content
                     Text(
                       note.content,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: textTheme.bodyMedium?.copyWith(
                         color: isDarkMode
-                            ? Colors.white.withOpacity(0.8)
-                            : Colors.black.withOpacity(0.7),
+                            ? Colors.white.withOpacity(0.85)
+                            : Colors.black.withOpacity(0.75),
                       ),
                       maxLines: 6,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 12),
+
+                    /// Category + Date
                     Row(
                       children: [
                         Container(
@@ -103,29 +109,27 @@ class NoteCard extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.1),
+                            color: isDarkMode
+                                ? Colors.white.withOpacity(0.12)
+                                : Colors.black.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             note.category,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: isDarkMode
-                                      ? Colors.white
-                                      : Colors.black87,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                            style: textTheme.bodySmall?.copyWith(
+                              color: isDarkMode ? Colors.white : Colors.black87,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         const Spacer(),
                         Text(
                           AppDateFormatter.formatDate(note.lastModified),
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: isDarkMode
-                                    ? Colors.white.withOpacity(0.6)
-                                    : Colors.black.withOpacity(0.5),
-                              ),
+                          style: textTheme.bodySmall?.copyWith(
+                            color: isDarkMode
+                                ? Colors.white.withOpacity(0.6)
+                                : Colors.black.withOpacity(0.5),
+                          ),
                         ),
                       ],
                     ),
