@@ -1,4 +1,4 @@
-import '../../../auth/domian/entities/user.dart';
+import '../../domian/entities/user.dart';
 
 class UserModel extends User {
   const UserModel({
@@ -16,6 +16,23 @@ class UserModel extends User {
       name: json['name'],
       createdAt: DateTime.parse(json['createdAt']),
       lastLoginAt: DateTime.parse(json['lastLoginAt']),
+    );
+  }
+
+  @override
+  UserModel copyWith({
+    String? id,
+    String? email,
+    String? name,
+    DateTime? createdAt,
+    DateTime? lastLoginAt,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      createdAt: createdAt ?? this.createdAt,
+      lastLoginAt: lastLoginAt ?? this.lastLoginAt,
     );
   }
 

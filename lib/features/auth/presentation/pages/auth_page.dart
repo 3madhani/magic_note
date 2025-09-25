@@ -288,6 +288,9 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
     );
   }
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/// A TextFormField widget for entering the user's email address.
+/*******  6e08984a-e06a-47d6-b2d2-7f7d1ef030ac  *******/
   Widget _buildEmailField() {
     return TextFormField(
       controller: _emailController,

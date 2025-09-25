@@ -1,6 +1,16 @@
 import 'package:equatable/equatable.dart';
-
 import '../../domian/entities/user.dart';
+
+abstract class AuthState extends Equatable {
+  const AuthState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class AuthInitial extends AuthState {}
+
+class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
   final User user;
@@ -11,6 +21,8 @@ class AuthAuthenticated extends AuthState {
   List<Object?> get props => [user];
 }
 
+class AuthUnauthenticated extends AuthState {}
+
 class AuthError extends AuthState {
   final String message;
 
@@ -19,16 +31,3 @@ class AuthError extends AuthState {
   @override
   List<Object?> get props => [message];
 }
-
-class AuthInitial extends AuthState {}
-
-class AuthLoading extends AuthState {}
-
-abstract class AuthState extends Equatable {
-  const AuthState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class AuthUnauthenticated extends AuthState {}

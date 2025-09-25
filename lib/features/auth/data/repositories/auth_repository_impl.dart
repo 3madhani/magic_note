@@ -1,7 +1,7 @@
-import '../../../notes/data/models/user_model.dart';
 import '../../domian/entities/user.dart';
 import '../../domian/repositories/auth_repository.dart';
 import '../datasources/auth_local_data_source.dart';
+import '../models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthLocalDataSource localDataSource;
@@ -23,13 +23,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<User> login(String email, String password) async {
     // For demo purposes, we'll create a demo user
     // In a real app, this would validate credentials with a server
-    final user =
-        UserModel.createDemo().copyWith(
-              email: email,
-              lastLoginAt: DateTime.now(),
-            )
-            as UserModel;
-
+    final user = UserModel.createDemo();
     await localDataSource.saveUser(user);
     return user.toEntity();
   }

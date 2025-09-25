@@ -205,7 +205,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    // TODO: handle navigation with AppCubit or Navigator
+                    context.read<AppCubit>().navigateToScreen(
+                      AppScreen.settings,
+                    );
                   },
                 ),
               )

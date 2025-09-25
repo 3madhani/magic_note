@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../core/errors/exceptions.dart';
-import '../../../notes/data/models/user_model.dart';
+import '../models/user_model.dart';
 
 abstract class AuthLocalDataSource {
   Future<bool> isAuthenticated();
