@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 import '../../../app/cubit/app_cubit.dart';
 import '../../../app/cubit/app_state.dart';
 import '../../domain/entities/note.dart';
 import '../widgets/note_card.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'empty_notes_state.dart';
 
 class NotesGrid extends StatelessWidget {

@@ -54,7 +54,8 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> updateSettings(Settings settings) async {
     try {
       await updateSettingsUseCase(UpdateSettingsParams(settings: settings));
-      emit(SettingsUpdated(settings, 'Settings updated successfully! ✨'));
+      // Instead of SettingsUpdated
+      emit(SettingsLoaded(settings));
     } catch (e) {
       emit(SettingsError('Failed to update settings: ${e.toString()}'));
     }
