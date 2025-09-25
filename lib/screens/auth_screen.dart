@@ -3,9 +3,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme/app_theme.dart';
+import '../core/widgets/glass_container.dart';
 import '../providers/app_provider.dart';
-import '../widgets/glass_container.dart';
-import '../widgets/magical_text.dart';
+import '../core/widgets/magical_text.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});

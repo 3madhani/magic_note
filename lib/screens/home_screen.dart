@@ -3,11 +3,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 
+import '../core/widgets/glass_container.dart';
 import '../models/note.dart';
 import '../providers/app_provider.dart';
 import '../core/theme/app_theme.dart';
-import '../widgets/glass_container.dart';
-import '../widgets/magical_text.dart';
+import '../core/widgets/magical_text.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

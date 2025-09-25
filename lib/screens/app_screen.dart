@@ -5,7 +5,7 @@ import 'auth_screen.dart';
 import 'home_screen.dart';
 import 'note_editor_screen.dart';
 import 'settings_screen.dart';
-import '../widgets/reminder_modal.dart';
+import '../core/widgets/reminder_modal.dart';
 
 class AppScreen extends StatelessWidget {
   const AppScreen({super.key});

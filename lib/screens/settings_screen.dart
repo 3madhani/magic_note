@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/app_provider.dart';
 import '../core/theme/app_theme.dart';
-import '../widgets/glass_container.dart';
-import '../widgets/magical_text.dart';
+import '../core/widgets/glass_container.dart';
+import '../core/widgets/magical_text.dart';
+import '../providers/app_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
