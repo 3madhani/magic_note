@@ -27,14 +27,15 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   @override
   Widget build(BuildContext context) {
     final gradient = ThemeConstants.noteColors[_selectedColor]!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              gradient.colors.first.withOpacity(0.1),
-              gradient.colors.last.withOpacity(0.05),
+              gradient.colors.first.withOpacity(isDarkMode ? 0.1 : 0.3),
+              gradient.colors.last.withOpacity(isDarkMode ? 0.05 : 0.2),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -121,6 +122,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
       category: _selectedCategory,
       color: _selectedColor,
     );
+
     context.read<AppCubit>().navigateToScreen(AppScreen.home);
   }
 }

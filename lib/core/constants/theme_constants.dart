@@ -46,7 +46,7 @@ class ThemeConstants {
     'yellow': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFFfef3c7), Color(0xFFfde68a)],
+      colors: [ThemeConstants.goldenLight, ThemeConstants.goldenColor],
     ),
     'blue': LinearGradient(
       begin: Alignment.topLeft,

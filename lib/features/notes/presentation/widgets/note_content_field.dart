@@ -16,14 +16,19 @@ class NoteContentField extends StatelessWidget {
   Widget build(BuildContext context) {
     final gradient = ThemeConstants.noteColors[selectedColor]!;
     final textColor = Theme.of(context).colorScheme.onSurface;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: gradient.colors.map((c) => c.withOpacity(0.1)).toList(),
+          colors: gradient.colors
+              .map((c) => c.withOpacity(isDarkMode ? 0.1 : 0.3))
+              .toList(),
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: gradient.colors.first.withOpacity(0.3)),
+        border: Border.all(
+          color: gradient.colors.first.withOpacity(isDarkMode ? 0.3 : 0.5),
+        ),
       ),
       child: TextField(
         controller: controller,
@@ -35,7 +40,9 @@ class NoteContentField extends StatelessWidget {
         ).textTheme.bodyLarge?.copyWith(color: textColor, height: 1.6),
         decoration: InputDecoration(
           hintText: 'Start writing your magical note...',
-          hintStyle: TextStyle(color: textColor.withOpacity(0.5)),
+          hintStyle: TextStyle(
+            color: textColor.withOpacity(isDarkMode ? 0.5 : 0.7),
+          ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(20),
         ),

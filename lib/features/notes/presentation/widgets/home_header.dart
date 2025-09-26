@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/constants/theme_constants.dart';
+import '../../../../core/utils/data_formatter.dart';
 import '../../../../core/widgets/glass_container.dart';
 import '../../../../core/widgets/magical_text.dart';
-import '../../../../core/utils/data_formatter.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../../app/cubit/app_state.dart';
 
@@ -27,9 +29,12 @@ class HomeHeader extends StatelessWidget {
                 const MagicalText(
                   text: '✨ Magic Notes',
                   gradientColors: [
-                    Color(0xFFfbbf24),
-                    Color(0xFFf59e0b),
-                    Color(0xFFfbbf24),
+                    ThemeConstants.goldenColor,
+                    ThemeConstants.goldenColor,
+                    ThemeConstants.goldenDark,
+                    ThemeConstants.goldenDark,
+                    ThemeConstants.goldenColor,
+                    ThemeConstants.goldenColor,
                   ],
                 ),
                 const SizedBox(height: 4),

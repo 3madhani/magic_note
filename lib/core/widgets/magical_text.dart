@@ -1,6 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+class AnimatedGradientText extends StatefulWidget {
+  final String text;
+  final TextStyle? style;
+  final List<Color> colors;
+  final Duration duration;
+
+  const AnimatedGradientText({
+    super.key,
+    required this.text,
+    this.style,
+    this.colors = const [
+      Color(0xFF667eea),
+      Color(0xFF764ba2),
+      Color(0xFFf093fb),
+      Color(0xFF667eea),
+    ],
+    this.duration = const Duration(seconds: 3),
+  });
+
+  @override
+  State<AnimatedGradientText> createState() => _AnimatedGradientTextState();
+}
+
 class MagicalText extends StatelessWidget {
   final String text;
   final TextStyle? style;
@@ -51,47 +74,10 @@ class MagicalText extends StatelessWidget {
   }
 }
 
-class AnimatedGradientText extends StatefulWidget {
-  final String text;
-  final TextStyle? style;
-  final List<Color> colors;
-  final Duration duration;
-
-  const AnimatedGradientText({
-    super.key,
-    required this.text,
-    this.style,
-    this.colors = const [
-      Color(0xFF667eea),
-      Color(0xFF764ba2),
-      Color(0xFFf093fb),
-      Color(0xFF667eea),
-    ],
-    this.duration = const Duration(seconds: 3),
-  });
-
-  @override
-  State<AnimatedGradientText> createState() => _AnimatedGradientTextState();
-}
-
 class _AnimatedGradientTextState extends State<AnimatedGradientText>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(duration: widget.duration, vsync: this);
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
-    _controller.repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,5 +105,19 @@ class _AnimatedGradientTextState extends State<AnimatedGradientText>
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(duration: widget.duration, vsync: this);
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+    _controller.repeat();
   }
 }

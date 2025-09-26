@@ -36,10 +36,7 @@ class ColorSelector extends StatelessWidget {
                   gradient: gradient,
                   shape: BoxShape.circle,
                   border: isSelected
-                      ? Border.all(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          width: 3,
-                        )
+                      ? Border.all(color: ThemeConstants.goldenColor, width: 3)
                       : null,
                   boxShadow: [
                     BoxShadow(

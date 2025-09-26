@@ -14,16 +14,14 @@ class NoteModel extends Note {
 
   factory NoteModel.fromJson(Map<String, dynamic> json) {
     return NoteModel(
-      id: json['id'],
-      title: json['title'],
-      content: json['content'],
-      category: json['category'],
-      color: json['color'],
-      hasReminder: json['hasReminder'],
-      lastModified: DateTime.parse(json['lastModified']),
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.parse(json['lastModified']), // Fallback for legacy data
+      id: json['id'] as String,
+      title: json['title'] as String,
+      content: json['content'] as String,
+      category: json['category'] as String,
+      color: json['color'] as String,
+      hasReminder: json['hasReminder'] as bool,
+      lastModified: DateTime.parse(json['lastModified'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }
 

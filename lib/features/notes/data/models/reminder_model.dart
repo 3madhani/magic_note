@@ -14,13 +14,19 @@ class ReminderModel extends Reminder {
 
   factory ReminderModel.fromJson(Map<String, dynamic> json) {
     return ReminderModel(
-      id: json['id'],
-      noteId: json['noteId'],
-      date: DateTime.parse(json['date']),
-      time: TimeOfDay(hour: json['timeHour'], minute: json['timeMinute']),
-      repeat: RepeatOption.values[json['repeat']],
-      isActive: json['isActive'] ?? true,
-      createdAt: DateTime.parse(json['createdAt']),
+      id: json['id'] as String,
+      noteId: json['noteId'] as String,
+      date: DateTime.parse(json['date'] as String),
+      time: TimeOfDay(
+        hour: (json['time']['hour'] as num).toInt(),
+        minute: (json['time']['minute'] as num).toInt(),
+      ),
+      repeat: RepeatOption.values.firstWhere(
+        (e) => e.toString() == 'RepeatOption.${json['repeat']}',
+        orElse: () => RepeatOption.none,
+      ),
+      isActive: json['isActive'] as bool,
+      createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }
 
@@ -29,9 +35,8 @@ class ReminderModel extends Reminder {
       'id': id,
       'noteId': noteId,
       'date': date.toIso8601String(),
-      'timeHour': time.hour,
-      'timeMinute': time.minute,
-      'repeat': repeat.index,
+      'time': {'hour': time.hour, 'minute': time.minute},
+      'repeat': repeat.name,
       'isActive': isActive,
       'createdAt': createdAt.toIso8601String(),
     };
@@ -48,7 +53,6 @@ class ReminderModel extends Reminder {
       createdAt: reminder.createdAt,
     );
   }
-
   Reminder toEntity() {
     return Reminder(
       id: id,

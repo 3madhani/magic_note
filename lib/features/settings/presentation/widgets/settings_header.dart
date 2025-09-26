@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/constants/theme_constants.dart';
 import '../../../../core/widgets/glass_container.dart';
 import '../../../../core/widgets/magical_text.dart';
 
@@ -9,7 +11,6 @@ class SettingsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var of = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(24),
       child: Row(
@@ -30,9 +31,12 @@ class SettingsHeader extends StatelessWidget {
             child: MagicalText(
               text: 'Settings',
               gradientColors: [
-                of.colorScheme.secondary,
-                of.colorScheme.primary,
-                of.colorScheme.secondary,
+                ThemeConstants.goldenColor,
+                ThemeConstants.goldenColor,
+                ThemeConstants.goldenDark,
+                ThemeConstants.goldenDark,
+                ThemeConstants.goldenColor,
+                ThemeConstants.goldenColor,
               ],
             ),
           ),

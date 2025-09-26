@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'core/cubit/reminder_cubit.dart';
 import 'core/theme/app_theme.dart';
 import 'features/app/cubit/app_cubit.dart';
 import 'features/app/pages/app_page.dart';
@@ -28,7 +27,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => di.sl<AuthCubit>()..checkAuthStatus()),
         BlocProvider(create: (_) => di.sl<NotesCubit>()),
         BlocProvider(create: (_) => di.sl<SettingsCubit>()..loadSettings()),
-        BlocProvider(create: (_) => ReminderCubit()),
         BlocProvider(create: (_) => AppCubit()),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
@@ -41,6 +39,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Magic Notes',
             debugShowCheckedModeBanner: false,
+
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
