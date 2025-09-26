@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../models/reminder_data.dart';
-import '../../providers/app_provider.dart';
-import '../constants/theme_constants.dart';
-import 'glass_container.dart';
+import '../../../../core/constants/theme_constants.dart';
+import '../../../../core/widgets/glass_container.dart';
+import '../../features/app/cubit/app_cubit.dart';
+import '../../features/notes/domain/entities/reminder.dart';
+import '../../features/notes/presentation/cubit/notes_cubit.dart';
+import '../../features/notes/presentation/cubit/notes_state.dart';
+import 'reminder_action_buttons.dart';
+import 'reminder_active_toggle.dart';
+import 'reminder_date_selector.dart';
+import 'reminder_model_header.dart';
+import 'reminder_repeat_selector.dart';
+import 'reminder_time_selector.dart';
 
 class ReminderModal extends StatefulWidget {
-  const ReminderModal({super.key});
+  final String? noteId;
+  final Reminder? existingReminder;
+
+  const ReminderModal({super.key, this.noteId, this.existingReminder});
 
   @override
   State<ReminderModal> createState() => _ReminderModalState();
@@ -16,9 +26,10 @@ class ReminderModal extends StatefulWidget {
 
 class _ReminderModalState extends State<ReminderModal>
     with SingleTickerProviderStateMixin {
-  DateTime _selectedDate = DateTime.now();
-  TimeOfDay _selectedTime = TimeOfDay.now();
-  RepeatOption _selectedRepeat = RepeatOption.none;
+  late DateTime _selectedDate;
+  late TimeOfDay _selectedTime;
+  late RepeatOption _selectedRepeat;
+  bool _isActive = true;
 
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -26,52 +37,22 @@ class _ReminderModalState extends State<ReminderModal>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        return Container(
-          color: Colors.black.withOpacity(0.5 * _opacityAnimation.value),
-          child: Center(
-            child: Transform.scale(
-              scale: _scaleAnimation.value,
-              child: Container(
-                margin: const EdgeInsets.all(24),
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: GlassContainer(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Header
-                      _buildHeader(),
-
-                      const SizedBox(height: 24),
-
-                      // Date selection
-                      _buildDateSection(),
-
-                      const SizedBox(height: 20),
-
-                      // Time selection
-                      _buildTimeSection(),
-
-                      const SizedBox(height: 20),
-
-                      // Repeat options
-                      _buildRepeatSection(),
-
-                      const SizedBox(height: 32),
-
-                      // Action buttons
-                      _buildActionButtons(),
-                    ],
-                  ),
-                ),
+    return BlocListener<NotesCubit, NotesState>(
+      listener: _handleNotesStateChange,
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return Container(
+            color: Colors.black.withOpacity(0.5 * _opacityAnimation.value),
+            child: Center(
+              child: Transform.scale(
+                scale: _scaleAnimation.value,
+                child: _buildModalContent(),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -84,6 +65,152 @@ class _ReminderModalState extends State<ReminderModal>
   @override
   void initState() {
     super.initState();
+    _initializeData();
+    _setupAnimations();
+  }
+
+  Widget _buildModalContent() {
+    return Container(
+      margin: const EdgeInsets.all(24),
+      constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
+      child: GlassContainer(
+        padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ReminderModalHeader(
+                isEditing: widget.existingReminder != null,
+                isActive: _isActive,
+                onClose: _closeModal,
+              ),
+              const SizedBox(height: 24),
+              ReminderActiveToggle(
+                isActive: _isActive,
+                onChanged: (value) => setState(() => _isActive = value),
+              ),
+              const SizedBox(height: 20),
+              ReminderDateSelector(
+                selectedDate: _selectedDate,
+                onDateChanged: (date) => setState(() => _selectedDate = date),
+              ),
+              const SizedBox(height: 20),
+              ReminderTimeSelector(
+                selectedTime: _selectedTime,
+                onTimeChanged: (time) => setState(() => _selectedTime = time),
+              ),
+              const SizedBox(height: 20),
+              ReminderRepeatSelector(
+                selectedRepeat: _selectedRepeat,
+                onRepeatChanged: (repeat) =>
+                    setState(() => _selectedRepeat = repeat),
+              ),
+              const SizedBox(height: 32),
+              ReminderActionButtons(
+                isEditing: widget.existingReminder != null,
+                onSave: _saveReminder,
+                onDelete: widget.existingReminder != null
+                    ? _deleteReminder
+                    : null,
+                onCancel: _closeModal,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _closeModal() {
+    _animationController.reverse().then((_) {
+      if (mounted) {
+        context.read<AppCubit>().closeReminderModal();
+      }
+    });
+  }
+
+  void _confirmDelete() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Reminder deleted successfully'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    _closeModal();
+  }
+
+  Reminder _createReminderEntity() {
+    return Reminder(
+      id:
+          widget.existingReminder?.id ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
+      noteId: widget.noteId!,
+      date: _selectedDate,
+      time: _selectedTime,
+      repeat: _selectedRepeat,
+      isActive: _isActive,
+      createdAt: widget.existingReminder?.createdAt ?? DateTime.now(),
+    );
+  }
+
+  void _deleteReminder() {
+    if (widget.existingReminder == null) return;
+    _showDeleteConfirmationDialog();
+  }
+
+  String _formatReminderText(Reminder reminder) {
+    final dateStr = 'MMM d'.replaceFirst(
+      'MMM d',
+      '${reminder.date.day}/${reminder.date.month}',
+    );
+    final timeStr = reminder.time.format(context);
+    final repeatStr = reminder.repeat != RepeatOption.none
+        ? ' (${reminder.repeatText.toLowerCase()})'
+        : '';
+    return '$dateStr at $timeStr$repeatStr';
+  }
+
+  void _handleNotesStateChange(BuildContext context, NotesState state) {
+    if (state is NoteOperationSuccess) {
+      _closeModal();
+    } else if (state is NotesError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(state.message),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  void _initializeData() {
+    if (widget.existingReminder != null) {
+      _selectedDate = widget.existingReminder!.date;
+      _selectedTime = widget.existingReminder!.time;
+      _selectedRepeat = widget.existingReminder!.repeat;
+      _isActive = widget.existingReminder!.isActive;
+    } else {
+      _selectedDate = DateTime.now().add(const Duration(hours: 1));
+      _selectedTime = TimeOfDay.fromDateTime(_selectedDate);
+      _selectedRepeat = RepeatOption.none;
+      _isActive = true;
+    }
+  }
+
+  void _saveReminder() {
+    if (widget.noteId == null) {
+      _showNoteRequiredMessage();
+      return;
+    }
+
+    final reminder = _createReminderEntity();
+    _showSuccessMessage(reminder);
+    _closeModal();
+  }
+
+  void _setupAnimations() {
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -100,385 +227,73 @@ class _ReminderModalState extends State<ReminderModal>
     _animationController.forward();
   }
 
-  Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: _closeModal,
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Colors.white.withOpacity(0.5)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black87,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          'Delete Reminder',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this reminder?',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
             child: Text(
               'Cancel',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(color: Colors.white.withOpacity(0.8)),
             ),
           ),
-        ),
-
-        const SizedBox(width: 16),
-
-        Expanded(
-          child: ElevatedButton(
-            onPressed: _saveReminder,
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _confirmDelete();
+            },
             style: ElevatedButton.styleFrom(
-              backgroundColor: ThemeConstants.goldenColor,
+              backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              elevation: 8,
-              shadowColor: ThemeConstants.goldenColor.withOpacity(0.3),
             ),
             child: const Text(
-              'Set Reminder ✨',
+              'Delete',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildDateSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Date',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        GestureDetector(
-          onTap: _selectDate,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.calendar_today,
-                  color: ThemeConstants.goldenColor,
-                  size: 20,
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: Text(
-                    DateFormat('EEEE, MMMM d, y').format(_selectedDate),
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white.withOpacity(0.5),
-                  size: 16,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            gradient: ThemeConstants.golden,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.notifications_active,
-            color: Colors.white,
-            size: 24,
-          ),
-        ),
-
-        const SizedBox(width: 12),
-
-        Expanded(
-          child: Text(
-            'Set Reminder',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-
-        IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
-          onPressed: _closeModal,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRepeatSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Repeat',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.3)),
-          ),
-          child: Column(
-            children: RepeatOption.values.map((option) {
-              final isSelected = _selectedRepeat == option;
-              final isLast = option == RepeatOption.values.last;
-
-              return GestureDetector(
-                onTap: () => setState(() => _selectedRepeat = option),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? ThemeConstants.goldenColor.withOpacity(0.2)
-                        : null,
-                    borderRadius: isLast
-                        ? const BorderRadius.only(
-                            bottomLeft: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
-                          )
-                        : option == RepeatOption.values.first
-                        ? const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          )
-                        : null,
-                    border: !isLast
-                        ? Border(
-                            bottom: BorderSide(
-                              color: Colors.white.withOpacity(0.1),
-                            ),
-                          )
-                        : null,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isSelected
-                                ? ThemeConstants.goldenColor
-                                : Colors.white.withOpacity(0.5),
-                            width: 2,
-                          ),
-                          color: isSelected ? ThemeConstants.goldenColor : null,
-                        ),
-                        child: isSelected
-                            ? const Icon(
-                                Icons.check,
-                                size: 12,
-                                color: Colors.white,
-                              )
-                            : null,
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      Expanded(
-                        child: Text(
-                          _getRepeatText(option),
-                          style: TextStyle(
-                            color: isSelected
-                                ? Colors.white
-                                : Colors.white.withOpacity(0.8),
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTimeSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Time',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        GestureDetector(
-          onTap: _selectTime,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.access_time,
-                  color: ThemeConstants.goldenColor,
-                  size: 20,
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: Text(
-                    _selectedTime.format(context),
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white.withOpacity(0.5),
-                  size: 16,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _closeModal() {
-    _animationController.reverse().then((_) {
-      final provider = Provider.of<AppProvider>(context, listen: false);
-      provider.closeReminderModal();
-    });
-  }
-
-  String _getRepeatText(RepeatOption option) {
-    switch (option) {
-      case RepeatOption.none:
-        return 'No Repeat';
-      case RepeatOption.daily:
-        return 'Daily';
-      case RepeatOption.weekly:
-        return 'Weekly';
-      case RepeatOption.monthly:
-        return 'Monthly';
-    }
-  }
-
-  void _saveReminder() {
-    final provider = Provider.of<AppProvider>(context, listen: false);
-    final reminderData = ReminderData(
-      date: _selectedDate,
-      time: _selectedTime,
-      repeat: _selectedRepeat,
-    );
-
-    provider.saveReminder(reminderData);
-
+  void _showNoteRequiredMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Reminder set for ${DateFormat('MMM d').format(_selectedDate)} at ${_selectedTime.format(context)} ✨',
-        ),
-        backgroundColor: ThemeConstants.goldenColor,
+      const SnackBar(
+        content: Text('Please save the note first before setting a reminder'),
+        backgroundColor: Colors.orange,
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
-  Future<void> _selectDate() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(
-              context,
-            ).colorScheme.copyWith(primary: ThemeConstants.goldenColor),
-          ),
-          child: child!,
-        );
-      },
+  void _showSuccessMessage(Reminder reminder) {
+    final message = _isActive
+        ? 'Reminder set for ${_formatReminderText(reminder)}'
+        : 'Reminder saved but disabled';
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: ThemeConstants.goldenColor,
+        behavior: SnackBarBehavior.floating,
+      ),
     );
-
-    if (date != null) {
-      setState(() => _selectedDate = date);
-    }
-  }
-
-  Future<void> _selectTime() async {
-    final time = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(
-              context,
-            ).colorScheme.copyWith(primary: ThemeConstants.goldenColor),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (time != null) {
-      setState(() => _selectedTime = time);
-    }
   }
 }

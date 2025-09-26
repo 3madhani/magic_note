@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/theme_constants.dart';
 
-import '../../core/constants/theme_constants.dart';
-
-class ReminderHeader extends StatelessWidget {
+class ReminderModalHeader extends StatelessWidget {
+  final bool isEditing;
+  final bool isActive;
   final VoidCallback onClose;
 
-  const ReminderHeader({super.key, required this.onClose});
+  const ReminderModalHeader({
+    super.key,
+    required this.isEditing,
+    required this.isActive,
+    required this.onClose,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +23,8 @@ class ReminderHeader extends StatelessWidget {
             gradient: ThemeConstants.golden,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.notifications_active,
+          child: Icon(
+            isActive ? Icons.notifications_active : Icons.notifications_off,
             color: Colors.white,
             size: 24,
           ),
@@ -26,9 +32,10 @@ class ReminderHeader extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Text(
-            'Set Reminder',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            isEditing ? 'Edit Reminder' : 'Set Reminder',
+            style: const TextStyle(
               color: Colors.white,
+              fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
           ),

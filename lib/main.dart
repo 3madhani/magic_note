@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import 'core/cubit/reminder_cubit.dart';
 import 'core/theme/app_theme.dart';
@@ -12,7 +11,6 @@ import 'features/notes/presentation/cubit/notes_cubit.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 import 'injection_container.dart' as di;
-import 'providers/app_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,33 +23,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AppProvider(),
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => di.sl<AuthCubit>()..checkAuthStatus()),
-          BlocProvider(create: (_) => di.sl<NotesCubit>()),
-          BlocProvider(create: (_) => di.sl<SettingsCubit>()..loadSettings()),
-          BlocProvider(create: (_) => ReminderCubit()),
-          BlocProvider(create: (_) => AppCubit()),
-        ],
-        child: BlocBuilder<SettingsCubit, SettingsState>(
-          builder: (context, settingsState) {
-            bool isDarkMode = false;
-            if (settingsState is SettingsLoaded) {
-              isDarkMode = settingsState.settings.isDarkMode;
-            }
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => di.sl<AuthCubit>()..checkAuthStatus()),
+        BlocProvider(create: (_) => di.sl<NotesCubit>()),
+        BlocProvider(create: (_) => di.sl<SettingsCubit>()..loadSettings()),
+        BlocProvider(create: (_) => ReminderCubit()),
+        BlocProvider(create: (_) => AppCubit()),
+      ],
+      child: BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (context, settingsState) {
+          bool isDarkMode = false;
+          if (settingsState is SettingsLoaded) {
+            isDarkMode = settingsState.settings.isDarkMode;
+          }
 
-            return MaterialApp(
-              title: 'Magic Notes',
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-              home: const AppPage(),
-            ).animate().fadeIn(duration: 800.ms);
-          },
-        ),
+          return MaterialApp(
+            title: 'Magic Notes',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: const AppPage(),
+          ).animate().fadeIn(duration: 800.ms);
+        },
       ),
     );
   }

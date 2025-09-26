@@ -19,7 +19,7 @@ class NoteCustomization extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).colorScheme.onBackground;
+    final textColor = Theme.of(context).colorScheme.onSurface;
 
     return GlassContainer(
       padding: const EdgeInsets.all(16),

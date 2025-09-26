@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import '../../models/reminder_data.dart';
+
+import '../../features/notes/domain/entities/reminder.dart';
 
 part 'reminder_state.dart';
 
@@ -14,20 +15,22 @@ class ReminderCubit extends Cubit<ReminderState> {
         ),
       );
 
-  void updateDate(DateTime date) => emit(state.copyWith(selectedDate: date));
-
-  void updateTime(TimeOfDay time) => emit(state.copyWith(selectedTime: time));
-
-  void updateRepeat(RepeatOption repeat) =>
-      emit(state.copyWith(selectedRepeat: repeat));
-
   void saveReminder() {
-    final reminder = ReminderData(
+    final reminder = Reminder(
+      noteId: "",
+      isActive: true,
+      id: UniqueKey().toString(),
+      createdAt: DateTime.now(),
       date: state.selectedDate,
       time: state.selectedTime,
       repeat: state.selectedRepeat,
     );
-    // TODO: persist reminder (db, service, etc.)
-    print('Saved reminder: $reminder');
   }
+
+  void updateDate(DateTime date) => emit(state.copyWith(selectedDate: date));
+
+  void updateRepeat(RepeatOption repeat) =>
+      emit(state.copyWith(selectedRepeat: repeat));
+
+  void updateTime(TimeOfDay time) => emit(state.copyWith(selectedTime: time));
 }
