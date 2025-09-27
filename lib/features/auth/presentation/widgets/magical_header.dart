@@ -40,17 +40,18 @@ class MagicalHeader extends StatelessWidget {
         const MagicalText(
           text: 'Magic Notes',
           gradientColors: [
-            ThemeConstants.goldenDark,
+            ThemeConstants.goldenLight,
             ThemeConstants.goldenColor,
             ThemeConstants.goldenColor,
-            ThemeConstants.goldenDark,
+            ThemeConstants.goldenLight,
           ],
         ),
         const SizedBox(height: 12),
         Text(
               'Where thoughts become magical',
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             )

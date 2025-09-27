@@ -27,29 +27,20 @@ class AuthForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     InputDecoration decoration(String label, IconData icon) {
       return InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
-          color: theme.colorScheme.onSurface.withOpacity(0.8),
-        ),
-        prefixIcon: Icon(
-          icon,
-          color: theme.colorScheme.onSurface.withOpacity(0.8),
-        ),
+        labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
+        prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.8)),
         filled: true,
-        fillColor: theme.colorScheme.onSurface.withOpacity(0.05),
+        fillColor: Colors.white.withOpacity(0.05),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: theme.colorScheme.onSurface.withOpacity(0.2),
-          ),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -63,25 +54,27 @@ class AuthForm extends StatelessWidget {
 
     return GlassContainer(
           padding: const EdgeInsets.all(32),
-          child: AnimatedContainer(
-            duration: 700.ms,
-            curve: Curves.fastOutSlowIn,
+          child: AnimatedSize(
+            duration: 500.ms,
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter, // يبدأ التمدد من فوق لتحت
             child: Column(
-              key: ValueKey(isLogin),
+              key: ValueKey(isLogin), // علشان يتغير المحتوى
+              mainAxisSize: MainAxisSize.min,
               children: [
                 AuthToggleButtons(isLogin: isLogin, onToggle: onToggle),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(color: theme.colorScheme.onSurface),
+                  style: TextStyle(color: Colors.white),
                   decoration: decoration("Email", Icons.email_outlined),
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: passwordController,
                   obscureText: obscurePassword,
-                  style: TextStyle(color: theme.colorScheme.onSurface),
+                  style: TextStyle(color: Colors.white),
                   decoration: decoration("Password", Icons.lock_outline)
                       .copyWith(
                         suffixIcon: IconButton(
@@ -89,7 +82,7 @@ class AuthForm extends StatelessWidget {
                             obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: Colors.white.withOpacity(0.7),
                           ),
                           onPressed: onTogglePassword,
                         ),
@@ -97,13 +90,32 @@ class AuthForm extends StatelessWidget {
                 ),
                 if (!isLogin) ...[
                   const SizedBox(height: 20),
-                  TextFormField(
-                    obscureText: obscurePassword,
-                    style: TextStyle(color: theme.colorScheme.onSurface),
-                    decoration: decoration(
-                      "Confirm Password",
-                      Icons.lock_outline,
-                    ),
+                  SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: Offset(-1, 0),
+                          end: Offset(0, 0),
+                        ).animate(
+                          CurvedAnimation(
+                            parent: AnimationController(
+                              duration: const Duration(milliseconds: 500),
+                              vsync: Scaffold.of(context),
+                            )..forward(),
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
+
+                    child: !isLogin
+                        ? TextFormField(
+                            key: const ValueKey("confirmField"),
+                            obscureText: obscurePassword,
+                            style: TextStyle(color: Colors.white),
+                            decoration: decoration(
+                              "Confirm Password",
+                              Icons.lock_outline,
+                            ),
+                          )
+                        : const SizedBox.shrink(key: ValueKey("empty")),
                   ),
                 ],
                 const SizedBox(height: 32),
@@ -113,7 +125,7 @@ class AuthForm extends StatelessWidget {
                   passwordController: passwordController,
                 ),
                 const SizedBox(height: 24),
-                DemoButton(),
+                const DemoButton(),
               ],
             ),
           ),

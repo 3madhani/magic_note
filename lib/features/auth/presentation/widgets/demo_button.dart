@@ -8,21 +8,25 @@ class DemoButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return TextButton(
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.zero,
+        minimumSize: const Size(0, 0),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        alignment: Alignment.center,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
       onPressed: () => context.read<AuthCubit>().login(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(
-            color: theme.colorScheme.onSurface.withOpacity(0.3),
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.5)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           'Try Demo',
           style: TextStyle(
-            color: theme.colorScheme.onSurface.withOpacity(0.9),
+            color: Colors.white.withOpacity(0.9),
             fontWeight: FontWeight.w500,
           ),
         ),

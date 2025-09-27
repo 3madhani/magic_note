@@ -20,7 +20,6 @@ class SearchAndFilters extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categories = ['All', 'Personal', 'Work', 'Ideas', 'Welcome'];
-    final brightness = Theme.of(context).brightness;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -31,23 +30,13 @@ class SearchAndFilters extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 child: TextField(
                   controller: searchController,
-                  style: TextStyle(
-                    color: brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black87,
-                  ),
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Search your magical notes...',
-                    hintStyle: TextStyle(
-                      color: brightness == Brightness.dark
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.black.withOpacity(0.6),
-                    ),
+                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
                     prefixIcon: Icon(
                       Icons.search,
-                      color: brightness == Brightness.dark
-                          ? Colors.white.withOpacity(0.8)
-                          : Colors.black.withOpacity(0.7),
+                      color: Colors.white.withOpacity(0.8),
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
@@ -92,17 +81,13 @@ class SearchAndFilters extends StatelessWidget {
                           decoration: BoxDecoration(
                             gradient: isSelected ? ThemeConstants.golden : null,
                             color: !isSelected
-                                ? (brightness == Brightness.dark
-                                      ? Colors.white.withOpacity(0.1)
-                                      : Colors.black.withOpacity(0.05))
+                                ? Colors.white.withOpacity(0.1)
                                 : null,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: isSelected
                                   ? Colors.transparent
-                                  : brightness == Brightness.dark
-                                  ? Colors.white.withOpacity(0.3)
-                                  : Colors.black.withOpacity(0.2),
+                                  : Colors.white.withOpacity(0.3),
                             ),
                           ),
                           child: Text(
@@ -110,9 +95,7 @@ class SearchAndFilters extends StatelessWidget {
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : (brightness == Brightness.dark
-                                        ? Colors.white.withOpacity(0.8)
-                                        : Colors.black87),
+                                  : Colors.white.withOpacity(0.8),
                               fontWeight: isSelected
                                   ? FontWeight.w600
                                   : FontWeight.normal,

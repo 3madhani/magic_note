@@ -58,7 +58,7 @@ class MagicalText extends StatelessWidget {
             style?.copyWith(color: Colors.white) ??
             Theme.of(context).textTheme.headlineMedium?.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
             ),
         textAlign: textAlign,
       ),

@@ -26,19 +26,17 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   @override
   Widget build(BuildContext context) {
-    final gradient = ThemeConstants.noteColors[_selectedColor]!;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              gradient.colors.first.withOpacity(isDarkMode ? 0.1 : 0.3),
-              gradient.colors.last.withOpacity(isDarkMode ? 0.05 : 0.2),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDarkMode
+                ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                : [const Color(0xFF667eea), const Color(0xFF764ba2)],
           ),
         ),
         child: SafeArea(

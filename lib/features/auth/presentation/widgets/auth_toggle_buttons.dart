@@ -14,10 +14,10 @@ class AuthToggleButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.onSurface.withOpacity(0.05),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -35,9 +35,7 @@ class AuthToggleButtons extends StatelessWidget {
                   'Sign In',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: isLogin
-                        ? Colors.white
-                        : theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -57,9 +55,7 @@ class AuthToggleButtons extends StatelessWidget {
                   'Sign Up',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: !isLogin
-                        ? Colors.white
-                        : theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

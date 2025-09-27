@@ -27,6 +27,7 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
 
     return BlocListener<AuthCubit, AuthState>(
@@ -51,34 +52,47 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
         }
       },
       child: Scaffold(
-        body: Stack(
-          children: [
-            AnimatedBackground(
-              floatingController: _floatingController,
-              rotationController: _rotationController,
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDarkMode
+                  ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                  : [const Color(0xFF667eea), const Color(0xFF764ba2)],
             ),
-            SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 60),
-                    const MagicalHeader(),
-                    const SizedBox(height: 60),
-                    AuthForm(
-                      isLogin: _isLogin,
-                      obscurePassword: _obscurePassword,
-                      emailController: _emailController,
-                      passwordController: _passwordController,
-                      onToggle: (value) => setState(() => _isLogin = value),
-                      onTogglePassword: () =>
-                          setState(() => _obscurePassword = !_obscurePassword),
-                    ),
-                  ],
+          ),
+
+          child: Stack(
+            children: [
+              AnimatedBackground(
+                floatingController: _floatingController,
+                rotationController: _rotationController,
+              ),
+              SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 60),
+                      const MagicalHeader(),
+                      const SizedBox(height: 60),
+                      AuthForm(
+                        isLogin: _isLogin,
+                        obscurePassword: _obscurePassword,
+                        emailController: _emailController,
+                        passwordController: _passwordController,
+                        onToggle: (value) => setState(() => _isLogin = value),
+                        onTogglePassword: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

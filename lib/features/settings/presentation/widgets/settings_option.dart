@@ -16,34 +16,23 @@ class SettingsOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
       onTap: onTap,
       child: Row(
         children: [
-          if (icon != null) Icon(icon, color: colorScheme.onSurfaceVariant),
+          if (icon != null) Icon(icon, color: Colors.white),
           if (icon != null) const SizedBox(width: 12),
           Expanded(
             child: Text(
               title,
-              style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
           if (value != null)
-            Text(
-              value!,
-              style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 14,
-              ),
-            ),
+            Text(value!, style: TextStyle(color: Colors.white, fontSize: 14)),
           if (icon != null)
-            Icon(
-              Icons.arrow_forward_ios,
-              color: colorScheme.onSurfaceVariant,
-              size: 16,
-            ),
+            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
         ],
       ),
     );

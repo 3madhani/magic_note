@@ -22,7 +22,17 @@ class SubmitButton extends StatelessWidget {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (_, state) {
         final isLoading = state is AuthLoading;
-        return SizedBox(
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: ThemeConstants.goldenColor.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
           width: double.infinity,
           height: 56,
           child: ElevatedButton(

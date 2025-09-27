@@ -17,17 +17,34 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingsState = context.watch<SettingsCubit>().state;
+    bool isDarkMode = false;
+    if (settingsState is SettingsLoaded) {
+      isDarkMode = settingsState.settings.isDarkMode;
+    }
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            SettingsHeader(
-              onBack: () {
-                context.read<AppCubit>().navigateToScreen(AppScreen.home);
-              },
-            ),
-            Expanded(child: _buildSettingsContent(context)),
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDarkMode
+                ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                : [const Color(0xFF667eea), const Color(0xFF764ba2)],
+          ),
+        ),
+
+        child: SafeArea(
+          child: Column(
+            children: [
+              SettingsHeader(
+                onBack: () {
+                  context.read<AppCubit>().navigateToScreen(AppScreen.home);
+                },
+              ),
+              Expanded(child: _buildSettingsContent(context)),
+            ],
+          ),
         ),
       ),
     );

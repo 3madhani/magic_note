@@ -33,52 +33,63 @@ class _UpdateNotePageState extends State<UpdateNotePage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              gradient.colors.first.withOpacity(isDarkMode ? 0.1 : 0.3),
-              gradient.colors.last.withOpacity(isDarkMode ? 0.05 : 0.2),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDarkMode
+                ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                : [const Color(0xFF667eea), const Color(0xFF764ba2)],
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              NoteEditorHeader(
-                title: "Edit Note",
-                onSave: _handleSave,
-                onMenuAction: _handleMenuAction,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      NoteCustomization(
-                        selectedColor: _selectedColor,
-                        selectedCategory: _selectedCategory,
-                        onColorChanged: (c) =>
-                            setState(() => _selectedColor = c),
-                        onCategoryChanged: (cat) =>
-                            setState(() => _selectedCategory = cat),
-                      ),
-                      const SizedBox(height: 24),
-                      NoteTitleField(
-                        controller: _titleController,
-                        selectedColor: _selectedColor,
-                      ),
-                      const SizedBox(height: 16),
-                      Expanded(
-                        child: NoteContentField(
-                          controller: _contentController,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                gradient.colors.first.withOpacity(isDarkMode ? 0.1 : 0.3),
+                gradient.colors.last.withOpacity(isDarkMode ? 0.05 : 0.2),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                NoteEditorHeader(
+                  title: "Edit Note",
+                  onSave: _handleSave,
+                  onMenuAction: _handleMenuAction,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        NoteCustomization(
+                          selectedColor: _selectedColor,
+                          selectedCategory: _selectedCategory,
+                          onColorChanged: (c) =>
+                              setState(() => _selectedColor = c),
+                          onCategoryChanged: (cat) =>
+                              setState(() => _selectedCategory = cat),
+                        ),
+                        const SizedBox(height: 24),
+                        NoteTitleField(
+                          controller: _titleController,
                           selectedColor: _selectedColor,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: NoteContentField(
+                            controller: _contentController,
+                            selectedColor: _selectedColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

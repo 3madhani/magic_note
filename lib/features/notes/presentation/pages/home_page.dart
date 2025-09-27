@@ -23,6 +23,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark
+        ? true
+        : false;
     return BlocBuilder<NotesCubit, NotesState>(
       builder: (context, state) {
         if (state is NotesLoading) {
@@ -44,16 +47,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
         if (state is NotesLoaded) {
           return Scaffold(
-            body: SafeArea(
-              child: Column(
-                children: [
-                  const HomeHeader(),
-                  SearchAndFilters(
-                    searchController: _searchController,
-                    state: state,
-                  ),
-                  Expanded(child: NotesGrid(notes: state.filteredNotes)),
-                ],
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDarkMode
+                      ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                      : [const Color(0xFF667eea), const Color(0xFF764ba2)],
+                ),
+              ),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    const HomeHeader(),
+                    SearchAndFilters(
+                      searchController: _searchController,
+                      state: state,
+                    ),
+
+                    Expanded(child: NotesGrid(notes: state.filteredNotes)),
+                  ],
+                ),
               ),
             ),
             floatingActionButton: CreateNoteFab(animation: _fabAnimation),

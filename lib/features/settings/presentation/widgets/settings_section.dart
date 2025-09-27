@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/widgets/glass_container.dart';
 
 class SettingsSection extends StatelessWidget {
@@ -24,12 +25,12 @@ class SettingsSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: colors.secondary, size: 24),
+              Icon(icon, color: colors.onSurface, size: 24),
               const SizedBox(width: 12),
               Text(
                 title,
                 style: TextStyle(
-                  color: colors.onSurface,
+                  color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),

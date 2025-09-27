@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/theme_constants.dart';
 import '../../../../core/widgets/glass_container.dart';
 import '../../../../core/widgets/magical_text.dart';
 
@@ -19,10 +18,7 @@ class SettingsHeader extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             borderRadius: BorderRadius.circular(12),
             child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+              icon: Icon(Icons.arrow_back, color: Colors.white, size: 30),
               onPressed: onBack,
             ),
           ),
@@ -30,14 +26,7 @@ class SettingsHeader extends StatelessWidget {
           Expanded(
             child: MagicalText(
               text: 'Settings',
-              gradientColors: [
-                ThemeConstants.goldenColor,
-                ThemeConstants.goldenColor,
-                ThemeConstants.goldenDark,
-                ThemeConstants.goldenDark,
-                ThemeConstants.goldenColor,
-                ThemeConstants.goldenColor,
-              ],
+              gradientColors: [Colors.purple, Colors.pink, Colors.purple],
             ),
           ),
         ],

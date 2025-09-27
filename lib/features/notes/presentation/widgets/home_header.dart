@@ -14,10 +14,6 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white.withOpacity(0.8)
-        : Colors.black.withOpacity(0.7);
-
     return Container(
       padding: const EdgeInsets.all(24),
       child: Row(
@@ -29,20 +25,21 @@ class HomeHeader extends StatelessWidget {
                 const MagicalText(
                   text: '✨ Magic Notes',
                   gradientColors: [
+                    ThemeConstants.goldenLight,
                     ThemeConstants.goldenColor,
-                    ThemeConstants.goldenColor,
-                    ThemeConstants.goldenDark,
-                    ThemeConstants.goldenDark,
-                    ThemeConstants.goldenColor,
-                    ThemeConstants.goldenColor,
+                    ThemeConstants.goldenLight,
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
                       'Good ${AppDateFormatter.getGreeting()}! Ready to create some magic?',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: textColor),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                        height: 1.2,
+                        wordSpacing: 0.5,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
                     )
                     .animate()
                     .fadeIn(duration: 600.ms, delay: 200.ms)
@@ -56,7 +53,8 @@ class HomeHeader extends StatelessWidget {
                 child: IconButton(
                   icon: Icon(
                     Icons.settings_outlined,
-                    color: Theme.of(context).iconTheme.color,
+                    color: Colors.white,
+                    size: 30,
                   ),
                   onPressed: () {
                     context.read<AppCubit>().navigateToScreen(

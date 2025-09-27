@@ -25,24 +25,7 @@ class AppPage extends StatelessWidget {
                 body: Stack(
                   children: [
                     // Background gradient
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors:
-                              Theme.of(context).brightness == Brightness.dark
-                              ? [
-                                  const Color(0xFF0f0f23),
-                                  const Color(0xFF1a1a2e),
-                                ]
-                              : [
-                                  const Color(0xFF667eea),
-                                  const Color(0xFF764ba2),
-                                ],
-                        ),
-                      ),
-                    ),
+
                     // Main content
                     _buildCurrentScreen(appState.currentScreen),
                     // Reminder modal

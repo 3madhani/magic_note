@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../cubit/settings_cubit.dart';
 
 class SettingsThemeToggle extends StatelessWidget {
@@ -15,13 +16,13 @@ class SettingsThemeToggle extends StatelessWidget {
       children: [
         Icon(
           isDarkMode ? Icons.dark_mode : Icons.light_mode,
-          color: colors.onSurfaceVariant,
+          color: colors.onSurface,
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             'Dark Mode',
-            style: TextStyle(color: colors.onSurface, fontSize: 16),
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ),
         Switch(

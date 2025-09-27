@@ -77,6 +77,30 @@ class AnimatedBackground extends StatelessWidget {
         ),
         Positioned(
           bottom: 150,
+          left: 80,
+          child: AnimatedBuilder(
+            animation: rotationController,
+            builder: (_, __) => Transform.rotate(
+              angle: rotationController.value * 2 * 3.14159,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: ThemeConstants.magicalPink,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFec4899).withOpacity(0.4),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 50,
           right: 80,
           child: AnimatedBuilder(
             animation: rotationController,
