@@ -5,8 +5,8 @@ import '../../../core/widgets/reminder_modal.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';
 import '../../auth/presentation/cubit/auth_state.dart';
 import '../../auth/presentation/pages/auth_page.dart';
+import '../../notes/presentation/pages/create_note_page.dart';
 import '../../notes/presentation/pages/home_page.dart';
-import '../../notes/presentation/pages/note_editor_page.dart';
 import '../../settings/presentation/pages/settings_page.dart';
 import '../cubit/app_cubit.dart';
 import '../cubit/app_state.dart';
@@ -63,8 +63,9 @@ class AppPage extends StatelessWidget {
     switch (screen) {
       case AppScreen.home:
         return const HomePage();
-      case AppScreen.editor:
-        return const NoteEditorPage();
+      case AppScreen.create:
+        return const CreateNotePage();
+
       case AppScreen.settings:
         return const SettingsPage();
       default:

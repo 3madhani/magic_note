@@ -18,7 +18,7 @@ class CreateNoteFab extends StatelessWidget {
       child:
           FloatingActionButton.extended(
                 onPressed: () {
-                  context.read<AppCubit>().navigateToScreen(AppScreen.editor);
+                  context.read<AppCubit>().navigateToScreen(AppScreen.create);
                 },
                 backgroundColor: ThemeConstants.goldenColor,
                 elevation: 12,

@@ -26,6 +26,7 @@ class AppConstants {
 
   // Supported colors
   static const List<String> colors = [
+    'babyblue',
     'yellow',
     'blue',
     'green',

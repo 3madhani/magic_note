@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../notes/data/datasources/notes_local_data_source.dart';
 import '../../domain/entities/note.dart';
 import '../../domain/usecases/create_note_usecase.dart';
 import '../../domain/usecases/delete_note_usecase.dart';
 import '../../domain/usecases/get_notes_usecase.dart';
 import '../../domain/usecases/search_notes_usecase.dart';
 import '../../domain/usecases/update_note_usecase.dart';
-import '../../../notes/data/datasources/notes_local_data_source.dart';
 import 'notes_state.dart';
 
 class NotesCubit extends Cubit<NotesState> {
@@ -27,13 +27,23 @@ class NotesCubit extends Cubit<NotesState> {
     required this.localDataSource,
   }) : super(NotesInitial());
 
-  Future<void> loadNotes() async {
+  Future<void> addSampleNotes() async {
     try {
-      emit(NotesLoading());
-      final notes = await getNotesUseCase();
-      emit(NotesLoaded(notes: notes, filteredNotes: notes));
+      await localDataSource.addSampleNotes();
+      await loadNotes();
     } catch (e) {
-      emit(NotesError('Failed to load notes: ${e.toString()}'));
+      emit(NotesError('Failed to add sample notes: ${e.toString()}'));
+    }
+  }
+
+  void clearMessages() {
+    final currentState = state;
+    if (currentState is NotesLoaded) {
+      // Keep the current loaded state without changing it
+      return;
+    }
+    if (currentState is NoteOperationSuccess || currentState is NotesError) {
+      loadNotes();
     }
   }
 
@@ -42,6 +52,7 @@ class NotesCubit extends Cubit<NotesState> {
     required String content,
     required String category,
     required String color,
+    bool hasReminder = false,
   }) async {
     try {
       await createNoteUseCase(
@@ -50,6 +61,7 @@ class NotesCubit extends Cubit<NotesState> {
           content: content,
           category: category,
           color: color,
+          hasReminder: hasReminder,
         ),
       );
 
@@ -60,16 +72,6 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  Future<void> updateNote(Note note) async {
-    try {
-      await updateNoteUseCase(UpdateNoteParams(note: note));
-      emit(const NoteOperationSuccess('Note updated successfully! ✨'));
-      await loadNotes();
-    } catch (e) {
-      emit(NotesError('Failed to update note: ${e.toString()}'));
-    }
-  }
-
   Future<void> deleteNote(String noteId) async {
     try {
       await deleteNoteUseCase(DeleteNoteParams(noteId: noteId));
@@ -77,25 +79,6 @@ class NotesCubit extends Cubit<NotesState> {
       await loadNotes();
     } catch (e) {
       emit(NotesError('Failed to delete note: ${e.toString()}'));
-    }
-  }
-
-  Future<void> searchNotes(String query) async {
-    final currentState = state;
-    if (currentState is NotesLoaded) {
-      try {
-        final filteredNotes = await searchNotesUseCase(
-          SearchNotesParams(query: query),
-        );
-        emit(
-          currentState.copyWith(
-            filteredNotes: filteredNotes,
-            searchQuery: query,
-          ),
-        );
-      } catch (e) {
-        emit(NotesError('Failed to search notes: ${e.toString()}'));
-      }
     }
   }
 
@@ -132,23 +115,42 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  Future<void> addSampleNotes() async {
+  Future<void> loadNotes() async {
     try {
-      await localDataSource.addSampleNotes();
-      await loadNotes();
+      emit(NotesLoading());
+      final notes = await getNotesUseCase();
+      emit(NotesLoaded(notes: notes, filteredNotes: notes));
     } catch (e) {
-      emit(NotesError('Failed to add sample notes: ${e.toString()}'));
+      emit(NotesError('Failed to load notes: ${e.toString()}'));
     }
   }
 
-  void clearMessages() {
+  Future<void> searchNotes(String query) async {
     final currentState = state;
     if (currentState is NotesLoaded) {
-      // Keep the current loaded state without changing it
-      return;
+      try {
+        final filteredNotes = await searchNotesUseCase(
+          SearchNotesParams(query: query),
+        );
+        emit(
+          currentState.copyWith(
+            filteredNotes: filteredNotes,
+            searchQuery: query,
+          ),
+        );
+      } catch (e) {
+        emit(NotesError('Failed to search notes: ${e.toString()}'));
+      }
     }
-    if (currentState is NoteOperationSuccess || currentState is NotesError) {
-      loadNotes();
+  }
+
+  Future<void> updateNote(Note note) async {
+    try {
+      await updateNoteUseCase(UpdateNoteParams(note: note));
+      emit(const NoteOperationSuccess('Note updated successfully! ✨'));
+      await loadNotes();
+    } catch (e) {
+      emit(NotesError('Failed to update note: ${e.toString()}'));
     }
   }
 }

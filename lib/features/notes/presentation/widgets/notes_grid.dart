@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:magic_note/features/notes/presentation/pages/update_note_page.dart';
 
-import '../../../app/cubit/app_cubit.dart';
-import '../../../app/cubit/app_state.dart';
 import '../../domain/entities/note.dart';
 import '../widgets/note_card.dart';
 import 'empty_notes_state.dart';
@@ -33,7 +31,13 @@ class NotesGrid extends StatelessWidget {
             note: note,
             index: index,
             onTap: () {
-              context.read<AppCubit>().navigateToScreen(AppScreen.editor);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return UpdateNotePage(note: note);
+                  },
+                ),
+              );
             },
           );
         },

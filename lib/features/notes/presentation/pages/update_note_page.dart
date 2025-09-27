@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:magic_note/features/notes/domain/entities/note.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/theme_constants.dart';
 import '../../../app/cubit/app_cubit.dart';
-import '../../../app/cubit/app_state.dart';
 import '../cubit/notes_cubit.dart';
 import '../widgets/note_content_field.dart';
 import '../widgets/note_customization.dart';
 import '../widgets/note_editor_header.dart';
 import '../widgets/note_title_field.dart';
 
-class NoteEditorPage extends StatefulWidget {
-  const NoteEditorPage({super.key});
+class UpdateNotePage extends StatefulWidget {
+  final Note note;
+  const UpdateNotePage({super.key, required this.note});
 
   @override
-  State<NoteEditorPage> createState() => _NoteEditorPageState();
+  State<UpdateNotePage> createState() => _UpdateNotePageState();
 }
 
-class _NoteEditorPageState extends State<NoteEditorPage> {
+class _UpdateNotePageState extends State<UpdateNotePage> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   String _selectedColor = AppConstants.defaultColor;
   String _selectedCategory = AppConstants.defaultCategory;
-
   @override
   Widget build(BuildContext context) {
     final gradient = ThemeConstants.noteColors[_selectedColor]!;
@@ -45,6 +45,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
           child: Column(
             children: [
               NoteEditorHeader(
+                title: "Edit Note",
                 onSave: _handleSave,
                 onMenuAction: _handleMenuAction,
               ),
@@ -94,8 +95,10 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
-    _contentController = TextEditingController();
+    _titleController = TextEditingController(text: widget.note.title);
+    _contentController = TextEditingController(text: widget.note.content);
+    _selectedColor = widget.note.color;
+    _selectedCategory = widget.note.category;
   }
 
   void _handleMenuAction(String action) {
@@ -116,13 +119,18 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   void _handleSave() {
-    context.read<NotesCubit>().createNote(
-      title: _titleController.text,
-      content: _contentController.text,
-      category: _selectedCategory,
-      color: _selectedColor,
+    context.read<NotesCubit>().updateNote(
+      widget.note.copyWith(
+        hasReminder: widget.note.hasReminder,
+        id: widget.note.id,
+        title: _titleController.text,
+        content: _contentController.text,
+        color: _selectedColor,
+        category: _selectedCategory,
+        lastModified: DateTime.now(),
+      ),
     );
 
-    context.read<AppCubit>().navigateToScreen(AppScreen.home);
+    Navigator.pop(context);
   }
 }

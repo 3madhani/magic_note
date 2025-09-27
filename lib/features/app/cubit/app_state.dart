@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum AppScreen { auth, home, editor, settings }
+enum AppScreen { auth, home, update, settings, create }
 
 class AppState extends Equatable {
   final AppScreen currentScreen;

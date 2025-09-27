@@ -43,6 +43,14 @@ class ThemeConstants {
 
   // Note color gradients for light theme
   static const Map<String, LinearGradient> noteColors = {
+    'babyblue': LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color.fromARGB(255, 135, 206, 250),
+        Color.fromARGB(255, 173, 216, 230),
+      ],
+    ),
     'yellow': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
@@ -77,10 +85,19 @@ class ThemeConstants {
 
   // Note color gradients for dark theme
   static const Map<String, LinearGradient> darkNoteColors = {
+    'babyblue': LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color.fromARGB(255, 70, 130, 180),
+        Color.fromARGB(255, 100, 149, 237),
+      ],
+    ),
+
     'yellow': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFF422006), Color(0xFF451a03)],
+      colors: [ThemeConstants.goldenDark, ThemeConstants.goldenColor],
     ),
     'blue': LinearGradient(
       begin: Alignment.topLeft,

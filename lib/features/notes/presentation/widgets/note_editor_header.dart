@@ -4,12 +4,14 @@ import '../../../../core/widgets/glass_container.dart';
 
 class NoteEditorHeader extends StatelessWidget {
   final VoidCallback onSave;
+  final String title;
   final Function(String) onMenuAction;
 
   const NoteEditorHeader({
     super.key,
     required this.onSave,
     required this.onMenuAction,
+    required this.title,
   });
 
   @override
@@ -31,7 +33,7 @@ class NoteEditorHeader extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: Text(
-              'Create Note',
+              title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: textColor,
                 fontWeight: FontWeight.w600,
