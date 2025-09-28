@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:magic_note/features/notes/presentation/pages/update_note_page.dart';
 
 import '../../domain/entities/note.dart';
 import '../widgets/note_card.dart';
@@ -27,19 +26,7 @@ class NotesGrid extends StatelessWidget {
         itemCount: notes.length,
         itemBuilder: (context, index) {
           final note = notes[index];
-          return NoteCard(
-            note: note,
-            index: index,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return UpdateNotePage(note: note);
-                  },
-                ),
-              );
-            },
-          );
+          return NoteCard(note: note, index: index);
         },
       ),
     );

@@ -8,18 +8,14 @@ import '../../../../core/widgets/glass_container.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../../settings/presentation/cubit/settings_state.dart';
 import '../../domain/entities/note.dart';
+import '../cubit/notes_cubit.dart';
+import '../pages/update_note_page.dart';
 
 class NoteCard extends StatelessWidget {
   final Note note;
   final int index;
-  final VoidCallback onTap;
 
-  const NoteCard({
-    super.key,
-    required this.note,
-    required this.index,
-    required this.onTap,
-  });
+  const NoteCard({super.key, required this.note, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -39,17 +35,46 @@ class NoteCard extends StatelessWidget {
         final textTheme = Theme.of(context).textTheme;
 
         return GestureDetector(
-              onTap: onTap,
+              onLongPress: () {
+                if (context.read<NotesCubit>().selectedNotes.isNotEmpty) {
+                  context.read<NotesCubit>().clearSelectedNotes();
+                  return;
+                }
+                context.read<NotesCubit>().toggleNoteSelection(note);
+              },
+              onTap: () {
+                if (context.read<NotesCubit>().selectedNotes.isNotEmpty) {
+                  context.read<NotesCubit>().toggleNoteSelection(note);
+                  return;
+                } else if (context.read<NotesCubit>().selectedNotes.contains(
+                  note,
+                )) {
+                  context.read<NotesCubit>().clearSelectedNotes();
+                  return;
+                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) {
+                      return UpdateNotePage(note: note);
+                    },
+                  ),
+                );
+              },
               child: MagicalContainer(
-                gradient: noteGradient,
+                gradient:
+                    context.read<NotesCubit>().selectedNotes.contains(note)
+                    ? LinearGradient(
+                        colors: noteGradient.colors
+                            .map((e) => e.withOpacity(0.5))
+                            .toList(),
+                      )
+                    : noteGradient,
                 padding: const EdgeInsets.all(16),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: isDarkMode
-                        ? Colors.black.withOpacity(0.4)
-                        : noteGradient.colors.first.withOpacity(0.3),
-                    blurRadius: 10,
+                    color: Colors.white.withOpacity(0.3),
+                    blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
                 ],

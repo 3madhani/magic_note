@@ -25,10 +25,12 @@ class NotesInitial extends NotesState {}
 class NotesLoaded extends NotesState {
   final List<Note> notes;
   final List<Note> filteredNotes;
+  final List<Note> selectedNotes;
   final String searchQuery;
   final String selectedCategory;
 
   const NotesLoaded({
+    this.selectedNotes = const [],
     required this.notes,
     required this.filteredNotes,
     this.searchQuery = '',
@@ -37,6 +39,7 @@ class NotesLoaded extends NotesState {
 
   @override
   List<Object?> get props => [
+    selectedNotes,
     notes,
     filteredNotes,
     searchQuery,
@@ -65,4 +68,36 @@ abstract class NotesState extends Equatable {
 
   @override
   List<Object?> get props => [];
+}
+
+class SelectionMode extends NotesLoaded {
+  @override
+  final List<Note> selectedNotes;
+
+  const SelectionMode({
+    required super.notes,
+    required super.filteredNotes,
+    required this.selectedNotes,
+    super.selectedCategory,
+    super.searchQuery,
+  });
+
+  @override
+  List<Object?> get props => super.props + [selectedNotes];
+  @override
+  SelectionMode copyWith({
+    List<Note>? notes,
+    List<Note>? filteredNotes,
+    List<Note>? selectedNotes,
+    String? selectedCategory,
+    String? searchQuery,
+  }) {
+    return SelectionMode(
+      notes: notes ?? this.notes,
+      filteredNotes: filteredNotes ?? this.filteredNotes,
+      selectedNotes: selectedNotes ?? this.selectedNotes,
+      selectedCategory: selectedCategory ?? this.selectedCategory,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
+  }
 }

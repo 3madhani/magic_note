@@ -10,13 +10,11 @@ class SettingsThemeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return Row(
       children: [
         Icon(
           isDarkMode ? Icons.dark_mode : Icons.light_mode,
-          color: colors.onSurface,
+          color: Colors.white,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -28,10 +26,10 @@ class SettingsThemeToggle extends StatelessWidget {
         Switch(
           value: isDarkMode,
           onChanged: (_) => context.read<SettingsCubit>().toggleDarkMode(),
-          activeThumbColor: colors.secondary,
-          activeTrackColor: colors.secondary.withOpacity(0.3),
-          inactiveThumbColor: colors.onSurface,
-          inactiveTrackColor: colors.onSurfaceVariant.withOpacity(0.3),
+          activeThumbColor: Colors.white,
+          activeTrackColor: Colors.white.withOpacity(0.5),
+          inactiveThumbColor: Colors.white,
+          inactiveTrackColor: Colors.white.withOpacity(0.5),
         ),
       ],
     );

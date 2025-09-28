@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/theme_constants.dart';
 import '../../../../core/widgets/glass_container.dart';
 import '../../../../core/widgets/magical_text.dart';
 
@@ -26,7 +27,11 @@ class SettingsHeader extends StatelessWidget {
           Expanded(
             child: MagicalText(
               text: 'Settings',
-              gradientColors: [Colors.purple, Colors.pink, Colors.purple],
+              gradientColors: [
+                ThemeConstants.goldenLight,
+                ThemeConstants.goldenColor,
+                ThemeConstants.goldenLight,
+              ],
             ),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:magic_note/core/constants/theme_constants.dart';
 
 import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
@@ -53,22 +54,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: isDarkMode
-                      ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                      ? [
+                          ThemeConstants.darkBackground,
+                          ThemeConstants.darkBackground.withOpacity(0.6),
+                        ]
                       : [const Color(0xFF667eea), const Color(0xFF764ba2)],
                 ),
               ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    const HomeHeader(),
-                    SearchAndFilters(
-                      searchController: _searchController,
-                      state: state,
-                    ),
+              child: Stack(
+                children: [
+                  SafeArea(
+                    child: Column(
+                      children: [
+                        const HomeHeader(),
+                        SearchAndFilters(
+                          searchController: _searchController,
+                          state: state,
+                        ),
 
-                    Expanded(child: NotesGrid(notes: state.filteredNotes)),
-                  ],
-                ),
+                        Expanded(child: NotesGrid(notes: state.filteredNotes)),
+                      ],
+                    ),
+                  ),
+                  buildSelectionActions(context, state, _fabAnimation),
+                ],
               ),
             ),
             floatingActionButton: CreateNoteFab(animation: _fabAnimation),
@@ -77,6 +86,83 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
         return const Scaffold(body: SizedBox.shrink());
       },
+    );
+  }
+
+  Positioned buildSelectionActions(
+    BuildContext context,
+    NotesLoaded state,
+    Animation<double> fabAnimation,
+  ) {
+    final hasSelection = state.selectedNotes.isNotEmpty;
+
+    return Positioned(
+      bottom: 200,
+      right: 24,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        switchInCurve: Curves.easeOutBack,
+        switchOutCurve: Curves.easeInBack,
+        transitionBuilder: (child, animation) {
+          final slide = Tween<Offset>(
+            begin: const Offset(0.3, 0), // slide from right
+            end: Offset.zero,
+          ).animate(animation);
+
+          return SlideTransition(
+            position: slide,
+            child: FadeTransition(opacity: animation, child: child),
+          );
+        },
+        child: hasSelection
+            ? Column(
+                key: const ValueKey("fab-actions"),
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'selected_count_fab',
+                    elevation: 3,
+
+                    onPressed: null,
+                    backgroundColor: ThemeConstants.goldenDark.withOpacity(0.8),
+                    child: Text(
+                      state.selectedNotes.length.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  FloatingActionButton(
+                    heroTag: 'delete_notes_fab',
+                    onPressed: () {
+                      context.read<NotesCubit>().deleteNotes();
+                    },
+                    backgroundColor: Colors.redAccent,
+                    child: const Icon(
+                      Icons.delete,
+                      size: 26,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  FloatingActionButton(
+                    heroTag: 'clear_selection_fab',
+                    onPressed: () {
+                      context.read<NotesCubit>().clearSelectedNotes();
+                    },
+                    backgroundColor: Colors.white.withOpacity(0.2),
+                    child: const Icon(
+                      Icons.close,
+                      size: 26,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              )
+            : const SizedBox.shrink(key: ValueKey("fab-empty")),
+      ),
     );
   }
 

@@ -17,6 +17,7 @@ class NotesCubit extends Cubit<NotesState> {
   final DeleteNoteUseCase deleteNoteUseCase;
   final SearchNotesUseCase searchNotesUseCase;
   final NotesLocalDataSource localDataSource;
+  final List<Note> selectedNotes = [];
 
   NotesCubit({
     required this.getNotesUseCase,
@@ -44,6 +45,16 @@ class NotesCubit extends Cubit<NotesState> {
     }
     if (currentState is NoteOperationSuccess || currentState is NotesError) {
       loadNotes();
+    }
+  }
+
+  Future<void> clearSelectedNotes() async {
+    selectedNotes.clear();
+    await loadNotes();
+    final currentState = state;
+
+    if (currentState is NotesLoaded) {
+      emit(currentState.copyWith());
     }
   }
 
@@ -79,6 +90,17 @@ class NotesCubit extends Cubit<NotesState> {
       await loadNotes();
     } catch (e) {
       emit(NotesError('Failed to delete note: ${e.toString()}'));
+    }
+  }
+
+  Future<void> deleteNotes() async {
+    for (var selectedNote in List<Note>.from(selectedNotes)) {
+      await deleteNote(selectedNote.id);
+    }
+    selectedNotes.clear();
+    final currentState = state;
+    if (currentState is NotesLoaded) {
+      emit(currentState.copyWith());
     }
   }
 
@@ -140,6 +162,38 @@ class NotesCubit extends Cubit<NotesState> {
         );
       } catch (e) {
         emit(NotesError('Failed to search notes: ${e.toString()}'));
+      }
+    }
+  }
+
+  Future<void> toggleNoteSelection(Note note) async {
+    if (selectedNotes.contains(note)) {
+      selectedNotes.remove(note);
+    } else {
+      selectedNotes.add(note);
+    }
+
+    final currentState = state;
+    if (currentState is NotesLoaded) {
+      if (selectedNotes.isEmpty) {
+        emit(
+          NotesLoaded(
+            notes: currentState.notes,
+            filteredNotes: currentState.filteredNotes,
+            searchQuery: currentState.searchQuery,
+            selectedCategory: currentState.selectedCategory,
+          ),
+        );
+      } else {
+        emit(
+          NotesLoaded(
+            notes: currentState.notes,
+            filteredNotes: currentState.filteredNotes,
+            selectedNotes: List<Note>.from(selectedNotes),
+            selectedCategory: currentState.selectedCategory,
+            searchQuery: currentState.searchQuery,
+          ),
+        );
       }
     }
   }

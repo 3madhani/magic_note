@@ -16,8 +16,6 @@ class SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return GlassContainer(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -25,7 +23,7 @@ class SettingsSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: colors.onSurface, size: 24),
+              Icon(icon, color: Colors.white, size: 24),
               const SizedBox(width: 12),
               Text(
                 title,

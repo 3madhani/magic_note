@@ -34,8 +34,8 @@ class AnimatedBackground extends StatelessWidget {
                           boxShadow: [
                             BoxShadow(
                               color: const Color(0xFF8b5cf6).withOpacity(0.4),
-                              blurRadius: 20,
-                              spreadRadius: 5,
+                              blurRadius: 40,
+                              spreadRadius: 7,
                             ),
                           ],
                         ),
@@ -64,14 +64,14 @@ class AnimatedBackground extends StatelessWidget {
                               color: ThemeConstants.goldenColor.withOpacity(
                                 0.4,
                               ),
-                              blurRadius: 15,
+                              blurRadius: 40,
                               spreadRadius: 3,
                             ),
                           ],
                         ),
                       )
                       .animate(delay: 500.ms, onPlay: (c) => c.repeat())
-                      .shimmer(duration: 2500.ms, padding: 10),
+                      .shimmer(duration: 2500.ms, padding: 20),
             ),
           ),
         ),

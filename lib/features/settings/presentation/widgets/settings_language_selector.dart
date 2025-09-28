@@ -5,11 +5,9 @@ class SettingsLanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return Row(
       children: [
-        Icon(Icons.language, color: colors.onSurface),
+        Icon(Icons.language, color: Colors.white),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
@@ -20,13 +18,13 @@ class SettingsLanguageSelector extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: colors.surfaceContainerHigh.withOpacity(0.4),
+            color: Colors.white.withOpacity(0.2),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: colors.outline.withOpacity(0.4)),
+            border: Border.all(color: Colors.white),
           ),
           child: Text(
             'English',
-            style: TextStyle(color: colors.onSurface, fontSize: 14),
+            style: TextStyle(color: Colors.white, fontSize: 14),
           ),
         ),
       ],
