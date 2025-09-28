@@ -21,7 +21,7 @@ class CategorySelector extends StatelessWidget {
       icon: const Icon(Icons.arrow_drop_down_rounded, size: 26),
       borderRadius: BorderRadius.circular(12),
       value: selectedCategory,
-      dropdownColor: Theme.of(context).colorScheme.onPrimary,
+      dropdownColor: Theme.of(context).colorScheme.surface,
       style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       underline: SizedBox(),
       isExpanded: true,

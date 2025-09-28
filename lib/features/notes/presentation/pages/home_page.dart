@@ -27,7 +27,37 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark
         ? true
         : false;
-    return BlocBuilder<NotesCubit, NotesState>(
+    return BlocConsumer<NotesCubit, NotesState>(
+      listenWhen: (previous, current) => previous != current,
+      listener: (context, state) {
+        if (state is NoteOperationSuccess) {
+          final snackBar = SnackBar(
+            shape: ShapeBorder.lerp(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 1,
+                ),
+              ),
+              0.5,
+            ),
+            backgroundColor: ThemeConstants.goldenColor,
+            behavior: SnackBarBehavior.floating,
+            content: Text(state.message),
+            duration: const Duration(seconds: 2),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        } else if (state is NotesError) {
+          final snackBar = SnackBar(
+            content: Text(state.message),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+      },
       builder: (context, state) {
         if (state is NotesLoading) {
           return const Scaffold(

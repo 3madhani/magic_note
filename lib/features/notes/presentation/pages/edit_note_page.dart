@@ -11,15 +11,15 @@ import '../widgets/note_customization.dart';
 import '../widgets/note_editor_header.dart';
 import '../widgets/note_title_field.dart';
 
-class UpdateNotePage extends StatefulWidget {
+class EditNotePage extends StatefulWidget {
   final Note note;
-  const UpdateNotePage({super.key, required this.note});
+  const EditNotePage({super.key, required this.note});
 
   @override
-  State<UpdateNotePage> createState() => _UpdateNotePageState();
+  State<EditNotePage> createState() => _EditNotePageState();
 }
 
-class _UpdateNotePageState extends State<UpdateNotePage> {
+class _EditNotePageState extends State<EditNotePage> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   String _selectedColor = AppConstants.defaultColor;

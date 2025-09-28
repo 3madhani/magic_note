@@ -3,6 +3,7 @@ import '../entities/note.dart';
 import '../repositories/notes_repository.dart';
 
 class CreateNoteParams {
+  final String id;
   final String title;
   final String content;
   final String category;
@@ -10,6 +11,7 @@ class CreateNoteParams {
   final bool hasReminder;
 
   CreateNoteParams({
+    required this.id,
     required this.title,
     required this.content,
     required this.category,
@@ -26,7 +28,7 @@ class CreateNoteUseCase implements UseCase<void, CreateNoteParams> {
   @override
   Future<void> call(CreateNoteParams params) async {
     final note = Note(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: params.id,
       title: params.title,
       content: params.content,
       category: params.category,

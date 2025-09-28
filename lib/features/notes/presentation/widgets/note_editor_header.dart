@@ -42,8 +42,9 @@ class NoteEditorHeader extends StatelessWidget {
           ),
           GlassContainer(
             padding: const EdgeInsets.all(8),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             child: PopupMenuButton<String>(
+              color: Colors.white.withOpacity(0.9),
               icon: Icon(Icons.more_vert, color: textColor),
               onSelected: onMenuAction,
               itemBuilder: (context) => [
@@ -51,9 +52,19 @@ class NoteEditorHeader extends StatelessWidget {
                   value: 'reminder',
                   child: Row(
                     children: [
-                      Icon(Icons.notifications_outlined),
+                      Icon(
+                        Icons.notifications_outlined,
+                        size: 20,
+                        color: Colors.black,
+                      ),
                       SizedBox(width: 12),
-                      Text('Set Reminder'),
+                      Text(
+                        'Set Reminder',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -61,9 +72,15 @@ class NoteEditorHeader extends StatelessWidget {
                   value: 'share',
                   child: Row(
                     children: [
-                      Icon(Icons.share_outlined),
+                      Icon(Icons.share_outlined, size: 20, color: Colors.black),
                       SizedBox(width: 12),
-                      Text('Share'),
+                      Text(
+                        'Share',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),

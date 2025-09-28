@@ -9,7 +9,7 @@ import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../../settings/presentation/cubit/settings_state.dart';
 import '../../domain/entities/note.dart';
 import '../cubit/notes_cubit.dart';
-import '../pages/update_note_page.dart';
+import '../pages/edit_note_page.dart';
 
 class NoteCard extends StatelessWidget {
   final Note note;
@@ -55,7 +55,7 @@ class NoteCard extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) {
-                      return UpdateNotePage(note: note);
+                      return EditNotePage(note: note);
                     },
                   ),
                 );

@@ -15,10 +15,9 @@ import 'reminder_repeat_selector.dart';
 import 'reminder_time_selector.dart';
 
 class ReminderModal extends StatefulWidget {
-  final String? noteId;
   final Reminder? existingReminder;
 
-  const ReminderModal({super.key, this.noteId, this.existingReminder});
+  const ReminderModal({super.key, this.existingReminder});
 
   @override
   State<ReminderModal> createState() => _ReminderModalState();
@@ -27,18 +26,20 @@ class ReminderModal extends StatefulWidget {
 class _ReminderModalState extends State<ReminderModal>
     with SingleTickerProviderStateMixin {
   late DateTime _selectedDate;
+  late String? noteId;
   late TimeOfDay _selectedTime;
   late RepeatOption _selectedRepeat;
   bool _isActive = true;
 
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _opacityAnimation;
+  late final AnimationController _animationController;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<double> _opacityAnimation;
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<NotesCubit, NotesState>(
       listener: _handleNotesStateChange,
+      listenWhen: (previous, current) => previous != current,
       child: AnimatedBuilder(
         animation: _animationController,
         builder: (context, child) {
@@ -47,7 +48,7 @@ class _ReminderModalState extends State<ReminderModal>
             child: Center(
               child: Transform.scale(
                 scale: _scaleAnimation.value,
-                child: _buildModalContent(),
+                child: _buildModalContent(context),
               ),
             ),
           );
@@ -69,7 +70,10 @@ class _ReminderModalState extends State<ReminderModal>
     _setupAnimations();
   }
 
-  Widget _buildModalContent() {
+  /// -------------------------------
+  /// UI
+  /// -------------------------------
+  Widget _buildModalContent(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(24),
       constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
@@ -130,22 +134,19 @@ class _ReminderModalState extends State<ReminderModal>
   }
 
   void _confirmDelete() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Reminder deleted successfully'),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    _showSnackBar('Reminder deleted successfully', Colors.red);
     _closeModal();
   }
 
+  /// -------------------------------
+  /// Helpers
+  /// -------------------------------
   Reminder _createReminderEntity() {
     return Reminder(
       id:
           widget.existingReminder?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
-      noteId: widget.noteId!,
+      noteId: noteId!,
       date: _selectedDate,
       time: _selectedTime,
       repeat: _selectedRepeat,
@@ -160,10 +161,7 @@ class _ReminderModalState extends State<ReminderModal>
   }
 
   String _formatReminderText(Reminder reminder) {
-    final dateStr = 'MMM d'.replaceFirst(
-      'MMM d',
-      '${reminder.date.day}/${reminder.date.month}',
-    );
+    final dateStr = '${reminder.date.day}/${reminder.date.month}';
     final timeStr = reminder.time.format(context);
     final repeatStr = reminder.repeat != RepeatOption.none
         ? ' (${reminder.repeatText.toLowerCase()})'
@@ -174,23 +172,24 @@ class _ReminderModalState extends State<ReminderModal>
   void _handleNotesStateChange(BuildContext context, NotesState state) {
     if (state is NoteOperationSuccess) {
       _closeModal();
+      _showSnackBar(state.message, ThemeConstants.goldenColor);
     } else if (state is NotesError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(state.message),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      _showSnackBar(state.message, Colors.red);
+    } else if (state is NoteCreationSuccess) {
+      noteId = state.noteId;
     }
   }
 
+  /// -------------------------------
+  /// State Handling
+  /// -------------------------------
   void _initializeData() {
     if (widget.existingReminder != null) {
-      _selectedDate = widget.existingReminder!.date;
-      _selectedTime = widget.existingReminder!.time;
-      _selectedRepeat = widget.existingReminder!.repeat;
-      _isActive = widget.existingReminder!.isActive;
+      final r = widget.existingReminder!;
+      _selectedDate = r.date;
+      _selectedTime = r.time;
+      _selectedRepeat = r.repeat;
+      _isActive = r.isActive;
     } else {
       _selectedDate = DateTime.now().add(const Duration(hours: 1));
       _selectedTime = TimeOfDay.fromDateTime(_selectedDate);
@@ -199,14 +198,25 @@ class _ReminderModalState extends State<ReminderModal>
     }
   }
 
+  /// -------------------------------
+  /// Actions
+  /// -------------------------------
   void _saveReminder() {
-    if (widget.noteId == null) {
-      _showNoteRequiredMessage();
+    print('noteId: $noteId');
+    if (noteId == null) {
+      _showSnackBar(
+        'Please save the note first before setting a reminder',
+        Colors.orange,
+      );
       return;
     }
 
     final reminder = _createReminderEntity();
-    _showSuccessMessage(reminder);
+    final message = _isActive
+        ? 'Reminder set for ${_formatReminderText(reminder)}'
+        : 'Reminder saved but disabled';
+
+    _showSnackBar(message, ThemeConstants.goldenColor);
     _closeModal();
   }
 
@@ -228,26 +238,29 @@ class _ReminderModalState extends State<ReminderModal>
   }
 
   void _showDeleteConfirmationDialog() {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.black87,
+        backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
+        title: Text(
           'Delete Reminder',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        content: const Text(
+        content: Text(
           'Are you sure you want to delete this reminder?',
-          style: TextStyle(color: Colors.white70),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.white.withOpacity(0.8)),
-            ),
+            child: Text('Cancel', style: TextStyle(color: theme.hintColor)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -262,10 +275,7 @@ class _ReminderModalState extends State<ReminderModal>
             ),
             child: const Text(
               'Delete',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -273,25 +283,11 @@ class _ReminderModalState extends State<ReminderModal>
     );
   }
 
-  void _showNoteRequiredMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please save the note first before setting a reminder'),
-        backgroundColor: Colors.orange,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  void _showSuccessMessage(Reminder reminder) {
-    final message = _isActive
-        ? 'Reminder set for ${_formatReminderText(reminder)}'
-        : 'Reminder saved but disabled';
-
+  void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: ThemeConstants.goldenColor,
+        backgroundColor: color,
         behavior: SnackBarBehavior.floating,
       ),
     );

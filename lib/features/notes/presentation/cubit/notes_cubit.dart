@@ -66,8 +66,10 @@ class NotesCubit extends Cubit<NotesState> {
     bool hasReminder = false,
   }) async {
     try {
+      final String noteId = DateTime.now().millisecondsSinceEpoch.toString();
       await createNoteUseCase(
         CreateNoteParams(
+          id: noteId,
           title: title.trim().isEmpty ? AppConstants.untitledNote : title,
           content: content,
           category: category,
@@ -76,7 +78,10 @@ class NotesCubit extends Cubit<NotesState> {
         ),
       );
 
+      print('noteId: $noteId');
+
       emit(const NoteOperationSuccess('Note created successfully! ✨'));
+      emit(NoteCreationSuccess(noteId));
       await loadNotes();
     } catch (e) {
       emit(NotesError('Failed to create note: ${e.toString()}'));

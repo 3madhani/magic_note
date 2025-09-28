@@ -11,6 +11,14 @@ class NoteOperationSuccess extends NotesState {
   List<Object?> get props => [message];
 }
 
+class NoteCreationSuccess extends NotesState {
+  final String noteId;
+
+  const NoteCreationSuccess(this.noteId);
+  @override
+  List<Object?> get props => [noteId];
+}
+
 class NotesError extends NotesState {
   final String message;
 

@@ -6,6 +6,7 @@ import '../../../../core/constants/theme_constants.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../../app/cubit/app_state.dart';
 import '../cubit/notes_cubit.dart';
+import '../cubit/notes_state.dart';
 import '../widgets/note_content_field.dart';
 import '../widgets/note_customization.dart';
 import '../widgets/note_editor_header.dart';
@@ -29,54 +30,107 @@ class _CreateNotePageState extends State<CreateNotePage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDarkMode
-                ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
-                : [const Color(0xFF667eea), const Color(0xFF764ba2)],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              NoteEditorHeader(
-                title: 'Create Note',
-                onSave: _handleSave,
-                onMenuAction: _handleMenuAction,
+      body: BlocListener<NotesCubit, NotesState>(
+        listener: (context, state) {
+          if (state is NoteOperationSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: ThemeConstants.goldenColor,
+                behavior: SnackBarBehavior.floating,
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      NoteCustomization(
-                        selectedColor: _selectedColor,
-                        selectedCategory: _selectedCategory,
-                        onColorChanged: (c) =>
-                            setState(() => _selectedColor = c),
-                        onCategoryChanged: (cat) =>
-                            setState(() => _selectedCategory = cat),
-                      ),
-                      const SizedBox(height: 24),
-                      NoteTitleField(
-                        controller: _titleController,
-                        selectedColor: _selectedColor,
-                      ),
-                      const SizedBox(height: 16),
-                      Expanded(
-                        child: NoteContentField(
-                          controller: _contentController,
+            );
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDarkMode
+                  ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                  : [const Color(0xFF667eea), const Color(0xFF764ba2)],
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                NoteEditorHeader(
+                  title: 'Create Note',
+                  onSave: _handleSave,
+                  onMenuAction: _handleMenuAction,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        NoteCustomization(
+                          selectedColor: _selectedColor,
+                          selectedCategory: _selectedCategory,
+                          onColorChanged: (c) =>
+                              setState(() => _selectedColor = c),
+                          onCategoryChanged: (cat) =>
+                              setState(() => _selectedCategory = cat),
+                        ),
+                        const SizedBox(height: 24),
+                        NoteTitleField(
+                          controller: _titleController,
                           selectedColor: _selectedColor,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: NoteContentField(
+                            controller: _contentController,
+                            selectedColor: _selectedColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeConstants
+                            .noteColors[_selectedColor]!
+                            .colors[1],
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        context.read<NotesCubit>().createNote(
+                          title: _titleController.text,
+                          content: _contentController.text,
+                          category: _selectedCategory,
+                          color: _selectedColor,
+                        );
+                      },
+                      child: const Text(
+                        'Save Note',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
