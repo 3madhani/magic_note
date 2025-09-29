@@ -16,7 +16,7 @@ class NoteEditorHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).colorScheme.onSurface;
+    final textColor = Colors.black;
 
     return Container(
       padding: const EdgeInsets.all(16),

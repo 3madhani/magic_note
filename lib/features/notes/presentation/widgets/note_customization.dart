@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/widgets/glass_container.dart';
-import 'color_selector.dart';
 import 'category_selector.dart';
+import 'color_selector.dart';
 
 class NoteCustomization extends StatelessWidget {
   final String selectedColor;
@@ -19,7 +20,7 @@ class NoteCustomization extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).colorScheme.onSurface;
+    final textColor = Colors.black;
 
     return GlassContainer(
       padding: const EdgeInsets.all(16),

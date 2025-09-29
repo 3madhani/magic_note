@@ -4,7 +4,9 @@ import 'package:magic_note/features/notes/domain/entities/note.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/theme_constants.dart';
+import '../../../../core/widgets/reminder_modal.dart';
 import '../../../app/cubit/app_cubit.dart';
+import '../../../app/cubit/app_state.dart';
 import '../cubit/notes_cubit.dart';
 import '../widgets/note_content_field.dart';
 import '../widgets/note_customization.dart';
@@ -26,7 +28,6 @@ class _EditNotePageState extends State<EditNotePage> {
   String _selectedCategory = AppConstants.defaultCategory;
   @override
   Widget build(BuildContext context) {
-    final gradient = ThemeConstants.noteColors[_selectedColor]!;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -43,53 +44,69 @@ class _EditNotePageState extends State<EditNotePage> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
               colors: [
-                gradient.colors.first.withOpacity(isDarkMode ? 0.1 : 0.3),
-                gradient.colors.last.withOpacity(isDarkMode ? 0.05 : 0.2),
+                ThemeConstants.noteColors[_selectedColor]!.colors.first,
+                ThemeConstants.darkNoteColors[_selectedColor]!.colors.first,
               ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                NoteEditorHeader(
-                  title: "Edit Note",
-                  onSave: _handleSave,
-                  onMenuAction: _handleMenuAction,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
+          child: BlocBuilder<AppCubit, AppState>(
+            builder: (context, appState) {
+              return Stack(
+                children: [
+                  SafeArea(
                     child: Column(
                       children: [
-                        NoteCustomization(
-                          selectedColor: _selectedColor,
-                          selectedCategory: _selectedCategory,
-                          onColorChanged: (c) =>
-                              setState(() => _selectedColor = c),
-                          onCategoryChanged: (cat) =>
-                              setState(() => _selectedCategory = cat),
+                        NoteEditorHeader(
+                          title: "Edit Note",
+                          onSave: _handleSave,
+                          onMenuAction: _handleMenuAction,
                         ),
-                        const SizedBox(height: 24),
-                        NoteTitleField(
-                          controller: _titleController,
-                          selectedColor: _selectedColor,
-                        ),
-                        const SizedBox(height: 16),
                         Expanded(
-                          child: NoteContentField(
-                            controller: _contentController,
-                            selectedColor: _selectedColor,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                NoteCustomization(
+                                  selectedColor: _selectedColor,
+                                  selectedCategory: _selectedCategory,
+                                  onColorChanged: (c) =>
+                                      setState(() => _selectedColor = c),
+                                  onCategoryChanged: (cat) =>
+                                      setState(() => _selectedCategory = cat),
+                                ),
+                                const SizedBox(height: 24),
+                                NoteTitleField(
+                                  controller: _titleController,
+                                  selectedColor: _selectedColor,
+                                ),
+                                const SizedBox(height: 16),
+                                Expanded(
+                                  child: NoteContentField(
+                                    controller: _contentController,
+                                    selectedColor: _selectedColor,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
-            ),
+
+                  if (appState.isReminderModalOpen)
+                    ReminderModal(
+                      // existingReminder: widget.note.hasReminder
+                      //     ? widget.note.reminder
+                      //     : null,
+                      noteId: widget.note.id,
+                    ),
+                ],
+              );
+            },
           ),
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/theme_constants.dart';
+import '../../../../core/widgets/reminder_modal.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../../app/cubit/app_state.dart';
 import '../cubit/notes_cubit.dart';
@@ -24,115 +25,154 @@ class _CreateNotePageState extends State<CreateNotePage> {
   late TextEditingController _contentController;
   String _selectedColor = AppConstants.defaultColor;
   String _selectedCategory = AppConstants.defaultCategory;
+  late String? noteId;
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: BlocListener<NotesCubit, NotesState>(
-        listener: (context, state) {
-          if (state is NoteOperationSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: ThemeConstants.goldenColor,
-                behavior: SnackBarBehavior.floating,
+      body: BlocBuilder<AppCubit, AppState>(
+        builder: (context, appState) {
+          return BlocListener<NotesCubit, NotesState>(
+            listener: (context, state) {
+              if (state is NoteOperationSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: ThemeConstants.goldenColor,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDarkMode
+                      ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                      : [const Color(0xFF667eea), const Color(0xFF764ba2)],
+                ),
               ),
-            );
-          }
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDarkMode
-                  ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
-                  : [const Color(0xFF667eea), const Color(0xFF764ba2)],
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                NoteEditorHeader(
-                  title: 'Create Note',
-                  onSave: _handleSave,
-                  onMenuAction: _handleMenuAction,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      ThemeConstants.noteColors[_selectedColor]!.colors.first,
+                      ThemeConstants
+                          .darkNoteColors[_selectedColor]!
+                          .colors
+                          .first,
+                    ],
+                  ),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        NoteCustomization(
-                          selectedColor: _selectedColor,
-                          selectedCategory: _selectedCategory,
-                          onColorChanged: (c) =>
-                              setState(() => _selectedColor = c),
-                          onCategoryChanged: (cat) =>
-                              setState(() => _selectedCategory = cat),
-                        ),
-                        const SizedBox(height: 24),
-                        NoteTitleField(
-                          controller: _titleController,
-                          selectedColor: _selectedColor,
-                        ),
-                        const SizedBox(height: 16),
-                        Expanded(
-                          child: NoteContentField(
-                            controller: _contentController,
-                            selectedColor: _selectedColor,
+                child: Stack(
+                  children: [
+                    SafeArea(
+                      child: Column(
+                        children: [
+                          NoteEditorHeader(
+                            title: 'Create Note',
+                            onSave: _handleSave,
+                            onMenuAction: _handleMenuAction,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ThemeConstants
-                            .noteColors[_selectedColor]!
-                            .colors[1],
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: [
+                                  NoteCustomization(
+                                    selectedColor: _selectedColor,
+                                    selectedCategory: _selectedCategory,
+                                    onColorChanged: (c) =>
+                                        setState(() => _selectedColor = c),
+                                    onCategoryChanged: (cat) =>
+                                        setState(() => _selectedCategory = cat),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  NoteTitleField(
+                                    controller: _titleController,
+                                    selectedColor: _selectedColor,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Expanded(
+                                    child: NoteContentField(
+                                      controller: _contentController,
+                                      selectedColor: _selectedColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ThemeConstants
+                                      .noteColors[_selectedColor]!
+                                      .colors[1],
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 32,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: noteId != null
+                                    ? null
+                                    : () {
+                                        noteId = DateTime.now()
+                                            .millisecondsSinceEpoch
+                                            .toString();
+
+                                        context.read<NotesCubit>().createNote(
+                                          noteId: noteId!,
+                                          title: _titleController.text,
+                                          content: _contentController.text,
+                                          category: _selectedCategory,
+                                          color: _selectedColor,
+                                        );
+                                      },
+                                child: const Text(
+                                  'Save Note',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      onPressed: () {
-                        context.read<NotesCubit>().createNote(
-                          title: _titleController.text,
-                          content: _contentController.text,
-                          category: _selectedCategory,
-                          color: _selectedColor,
-                        );
-                      },
-                      child: const Text(
-                        'Save Note',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
                     ),
-                  ),
+
+                    if (appState.isReminderModalOpen)
+                      ReminderModal(
+                        // existingReminder: widget.note.hasReminder
+                        //     ? widget.note.reminder
+                        //     : null,
+                        noteId: noteId,
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -149,6 +189,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
     super.initState();
     _titleController = TextEditingController();
     _contentController = TextEditingController();
+    noteId = null;
   }
 
   void _handleMenuAction(String action) {
@@ -169,7 +210,9 @@ class _CreateNotePageState extends State<CreateNotePage> {
   }
 
   void _handleSave() {
+    noteId ??= DateTime.now().millisecondsSinceEpoch.toString();
     context.read<NotesCubit>().createNote(
+      noteId: noteId!,
       title: _titleController.text,
       content: _contentController.text,
       category: _selectedCategory,

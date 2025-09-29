@@ -63,10 +63,10 @@ class NotesCubit extends Cubit<NotesState> {
     required String content,
     required String category,
     required String color,
+    required String noteId,
     bool hasReminder = false,
   }) async {
     try {
-      final String noteId = DateTime.now().millisecondsSinceEpoch.toString();
       await createNoteUseCase(
         CreateNoteParams(
           id: noteId,
@@ -77,8 +77,6 @@ class NotesCubit extends Cubit<NotesState> {
           hasReminder: hasReminder,
         ),
       );
-
-      print('noteId: $noteId');
 
       emit(const NoteOperationSuccess('Note created successfully! ✨'));
       emit(NoteCreationSuccess(noteId));

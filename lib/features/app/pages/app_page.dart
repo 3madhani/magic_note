@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/widgets/reminder_modal.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';
 import '../../auth/presentation/cubit/auth_state.dart';
 import '../../auth/presentation/pages/auth_page.dart';
@@ -21,18 +20,7 @@ class AppPage extends StatelessWidget {
         if (authState is AuthAuthenticated) {
           return BlocBuilder<AppCubit, AppState>(
             builder: (context, appState) {
-              return Scaffold(
-                body: Stack(
-                  children: [
-                    // Background gradient
-
-                    // Main content
-                    _buildCurrentScreen(appState.currentScreen),
-                    // Reminder modal
-                    if (appState.isReminderModalOpen) const ReminderModal(),
-                  ],
-                ),
-              );
+              return _buildCurrentScreen(appState.currentScreen);
             },
           );
         }

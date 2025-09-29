@@ -16,8 +16,9 @@ import 'reminder_time_selector.dart';
 
 class ReminderModal extends StatefulWidget {
   final Reminder? existingReminder;
+  final String? noteId;
 
-  const ReminderModal({super.key, this.existingReminder});
+  const ReminderModal({super.key, this.existingReminder, this.noteId});
 
   @override
   State<ReminderModal> createState() => _ReminderModalState();
@@ -26,7 +27,6 @@ class ReminderModal extends StatefulWidget {
 class _ReminderModalState extends State<ReminderModal>
     with SingleTickerProviderStateMixin {
   late DateTime _selectedDate;
-  late String? noteId;
   late TimeOfDay _selectedTime;
   late RepeatOption _selectedRepeat;
   bool _isActive = true;
@@ -146,7 +146,7 @@ class _ReminderModalState extends State<ReminderModal>
       id:
           widget.existingReminder?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
-      noteId: noteId!,
+      noteId: widget.noteId!,
       date: _selectedDate,
       time: _selectedTime,
       repeat: _selectedRepeat,
@@ -175,9 +175,7 @@ class _ReminderModalState extends State<ReminderModal>
       _showSnackBar(state.message, ThemeConstants.goldenColor);
     } else if (state is NotesError) {
       _showSnackBar(state.message, Colors.red);
-    } else if (state is NoteCreationSuccess) {
-      noteId = state.noteId;
-    }
+    } else if (state is NoteCreationSuccess) {}
   }
 
   /// -------------------------------
@@ -202,8 +200,7 @@ class _ReminderModalState extends State<ReminderModal>
   /// Actions
   /// -------------------------------
   void _saveReminder() {
-    print('noteId: $noteId');
-    if (noteId == null) {
+    if (widget.noteId == null) {
       _showSnackBar(
         'Please save the note first before setting a reminder',
         Colors.orange,
@@ -242,7 +239,7 @@ class _ReminderModalState extends State<ReminderModal>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: theme.dialogBackgroundColor,
+        backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Delete Reminder',
@@ -286,6 +283,8 @@ class _ReminderModalState extends State<ReminderModal>
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        duration: const Duration(seconds: 3),
+        dismissDirection: DismissDirection.down,
         content: Text(message),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,

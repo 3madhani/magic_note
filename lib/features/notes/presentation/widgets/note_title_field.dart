@@ -15,7 +15,7 @@ class NoteTitleField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gradient = ThemeConstants.noteColors[selectedColor]!;
-    final textColor = Theme.of(context).colorScheme.onSurface;
+    final textColor = Colors.black.withOpacity(0.8);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
