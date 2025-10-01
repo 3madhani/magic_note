@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../notes/data/datasources/notes_local_data_source.dart';
-import '../../domain/entities/note.dart';
-import '../../domain/usecases/create_note_usecase.dart';
-import '../../domain/usecases/delete_note_usecase.dart';
-import '../../domain/usecases/get_notes_usecase.dart';
-import '../../domain/usecases/search_notes_usecase.dart';
-import '../../domain/usecases/update_note_usecase.dart';
+import '../../../../../core/constants/app_constants.dart';
+import '../../../data/datasources/notes_local_data_source.dart';
+import '../../../domain/entities/note.dart';
+import '../../../domain/usecases/create_note_usecase.dart';
+import '../../../domain/usecases/delete_note_usecase.dart';
+import '../../../domain/usecases/get_notes_usecase.dart';
+import '../../../domain/usecases/search_notes_usecase.dart';
+import '../../../domain/usecases/update_note_usecase.dart';
 import 'notes_state.dart';
 
 class NotesCubit extends Cubit<NotesState> {

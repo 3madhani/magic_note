@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/theme_constants.dart';
 import '../../../../core/widgets/glass_container.dart';
-import '../cubit/notes_cubit.dart';
-import '../cubit/notes_state.dart';
+import '../cubits/note_cubit/notes_cubit.dart';
+import '../cubits/note_cubit/notes_state.dart';
 
 class SearchAndFilters extends StatelessWidget {
   final TextEditingController searchController;

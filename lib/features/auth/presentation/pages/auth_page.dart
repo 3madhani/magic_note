@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/theme_constants.dart';
-import '../../../notes/presentation/cubit/notes_cubit.dart';
+import '../../../notes/presentation/cubits/note_cubit/notes_cubit.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/animated_background.dart';

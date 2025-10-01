@@ -17,7 +17,7 @@ import 'features/notes/domain/usecases/delete_note_usecase.dart';
 import 'features/notes/domain/usecases/get_notes_usecase.dart';
 import 'features/notes/domain/usecases/search_notes_usecase.dart';
 import 'features/notes/domain/usecases/update_note_usecase.dart';
-import 'features/notes/presentation/cubit/notes_cubit.dart';
+import 'features/notes/presentation/cubits/note_cubit/notes_cubit.dart';
 import 'features/settings/data/datasources/settings_local_data_source.dart';
 import 'features/settings/data/repositories/settings_repository_impl.dart';
 import 'features/settings/domain/repositories/settings_repository.dart';

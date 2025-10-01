@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/theme_constants.dart';
-import '../../features/notes/presentation/cubit/notes_cubit.dart';
-import '../../features/notes/presentation/cubit/notes_state.dart';
+import '../../features/notes/presentation/cubits/note_cubit/notes_cubit.dart';
+import '../../features/notes/presentation/cubits/note_cubit/notes_state.dart';
 
 class ReminderActionButtons extends StatelessWidget {
   final bool isEditing;

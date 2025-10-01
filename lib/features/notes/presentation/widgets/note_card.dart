@@ -8,7 +8,7 @@ import '../../../../core/widgets/glass_container.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../../settings/presentation/cubit/settings_state.dart';
 import '../../domain/entities/note.dart';
-import '../cubit/notes_cubit.dart';
+import '../cubits/note_cubit/notes_cubit.dart';
 import '../pages/edit_note_page.dart';
 
 class NoteCard extends StatelessWidget {

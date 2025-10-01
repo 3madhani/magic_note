@@ -6,7 +6,7 @@ import 'core/theme/app_theme.dart';
 import 'features/app/cubit/app_cubit.dart';
 import 'features/app/pages/app_page.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
-import 'features/notes/presentation/cubit/notes_cubit.dart';
+import 'features/notes/presentation/cubits/note_cubit/notes_cubit.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 import 'injection_container.dart' as di;

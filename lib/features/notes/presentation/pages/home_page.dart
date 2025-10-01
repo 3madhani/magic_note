@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic_note/core/constants/theme_constants.dart';
 
-import '../cubit/notes_cubit.dart';
-import '../cubit/notes_state.dart';
+import '../cubits/note_cubit/notes_cubit.dart';
+import '../cubits/note_cubit/notes_state.dart';
 import '../widgets/create_note_fab.dart';
 import '../widgets/home_header.dart';
 import '../widgets/notes_grid.dart';

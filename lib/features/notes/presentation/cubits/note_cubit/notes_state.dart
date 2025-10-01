@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../domain/entities/note.dart';
+import '../../../domain/entities/note.dart';
 
 class NoteOperationSuccess extends NotesState {
   final String message;

@@ -7,7 +7,7 @@ import '../../../../core/constants/theme_constants.dart';
 import '../../../../core/widgets/reminder_modal.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../../app/cubit/app_state.dart';
-import '../cubit/notes_cubit.dart';
+import '../cubits/note_cubit/notes_cubit.dart';
 import '../widgets/note_content_field.dart';
 import '../widgets/note_customization.dart';
 import '../widgets/note_editor_header.dart';
