@@ -1,18 +1,12 @@
-import 'package:magic_note/core/usecases/usecase.dart';
-
+import '../../../../core/usecases/usecase.dart';
 import '../entities/reminder.dart';
 import '../repositories/notes_repository.dart';
 
-class SaveReminderUsecase implements UseCase<void, SaveReminderUsecaseParams> {
+class SaveReminderUsecase implements UseCase<void, Reminder> {
   final NotesRepository repository;
   SaveReminderUsecase(this.repository);
   @override
-  Future<void> call(SaveReminderUsecaseParams params) async {
-    return repository.saveReminder(params.reminder);
+  Future<void> call(Reminder params) async {
+    return repository.saveReminder(params);
   }
-}
-
-class SaveReminderUsecaseParams {
-  final Reminder reminder;
-  SaveReminderUsecaseParams({required this.reminder});
 }
