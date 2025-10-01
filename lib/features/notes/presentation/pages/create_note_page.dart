@@ -161,12 +161,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
                     ),
 
                     if (appState.isReminderModalOpen)
-                      ReminderModal(
-                        // existingReminder: widget.note.hasReminder
-                        //     ? widget.note.reminder
-                        //     : null,
-                        noteId: noteId,
-                      ),
+                      ReminderModal(noteId: noteId),
                   ],
                 ),
               ),
@@ -210,15 +205,6 @@ class _CreateNotePageState extends State<CreateNotePage> {
   }
 
   void _handleSave() {
-    noteId ??= DateTime.now().millisecondsSinceEpoch.toString();
-    context.read<NotesCubit>().createNote(
-      noteId: noteId!,
-      title: _titleController.text,
-      content: _contentController.text,
-      category: _selectedCategory,
-      color: _selectedColor,
-    );
-
     context.read<AppCubit>().navigateToScreen(AppScreen.home);
   }
 }

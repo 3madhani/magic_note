@@ -10,6 +10,7 @@ import '../models/reminder_model.dart';
 abstract class NotesLocalDataSource {
   Future<void> addSampleNotes();
   Future<void> deleteNote(String id);
+  Future<void> deleteReminder(String id);
   Future<List<NoteModel>> getAllNotes();
   Future<NoteModel?> getNoteById(String id);
   Future<List<ReminderModel>> getRemindersForNote(String noteId);
@@ -17,6 +18,7 @@ abstract class NotesLocalDataSource {
   Future<void> saveReminder(ReminderModel reminder);
   Future<List<NoteModel>> searchNotes(String query);
   Future<void> updateNote(NoteModel note);
+  Future<void> updateReminder(ReminderModel reminder);
 }
 
 class NotesLocalDataSourceImpl implements NotesLocalDataSource {
@@ -85,6 +87,17 @@ class NotesLocalDataSourceImpl implements NotesLocalDataSource {
       await _saveReminders(reminders);
     } catch (e) {
       throw CacheException('Failed to delete note: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteReminder(String id) async {
+    try {
+      final reminders = await _getAllReminders();
+      reminders.removeWhere((reminder) => reminder.id == id);
+      await _saveReminders(reminders);
+    } catch (e) {
+      throw CacheException('Failed to delete reminder: $e');
     }
   }
 
@@ -175,6 +188,22 @@ class NotesLocalDataSourceImpl implements NotesLocalDataSource {
       }
     } catch (e) {
       throw CacheException('Failed to update note: $e');
+    }
+  }
+
+  @override
+  Future<void> updateReminder(ReminderModel reminder) async {
+    try {
+      final reminders = await _getAllReminders();
+      final index = reminders.indexWhere((r) => r.id == reminder.id);
+      if (index != -1) {
+        reminders[index] = reminder;
+        await _saveReminders(reminders);
+      } else {
+        throw CacheException('Reminder not found');
+      }
+    } catch (e) {
+      throw CacheException('Failed to update reminder: $e');
     }
   }
 

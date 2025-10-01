@@ -8,6 +8,7 @@ import '../../../../core/widgets/reminder_modal.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../../app/cubit/app_state.dart';
 import '../cubits/note_cubit/notes_cubit.dart';
+import '../cubits/reminder_cubit/reminder_cubit.dart';
 import '../widgets/note_content_field.dart';
 import '../widgets/note_customization.dart';
 import '../widgets/note_editor_header.dart';
@@ -98,12 +99,7 @@ class _EditNotePageState extends State<EditNotePage> {
                   ),
 
                   if (appState.isReminderModalOpen)
-                    ReminderModal(
-                      // existingReminder: widget.note.hasReminder
-                      //     ? widget.note.reminder
-                      //     : null,
-                      noteId: widget.note.id,
-                    ),
+                    ReminderModal(noteId: widget.note.id),
                 ],
               );
             },
@@ -123,6 +119,7 @@ class _EditNotePageState extends State<EditNotePage> {
   @override
   void initState() {
     super.initState();
+    context.read<ReminderCubit>().loadReminders(widget.note.id);
     _titleController = TextEditingController(text: widget.note.title);
     _contentController = TextEditingController(text: widget.note.content);
     _selectedColor = widget.note.color;

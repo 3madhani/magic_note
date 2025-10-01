@@ -17,8 +17,7 @@ class NotesRepositoryImpl implements NotesRepository {
 
   @override
   Future<void> deleteReminder(String id) async {
-    // Implementation would depend on data source having delete method
-    throw UnimplementedError();
+    await localDataSource.deleteReminder(id);
   }
 
   @override

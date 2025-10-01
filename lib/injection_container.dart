@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import 'package:magic_note/features/notes/domain/usecases/get_reminders_for_note_usecase.dart';
+import 'package:magic_note/features/notes/domain/usecases/save_reminder_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Features
@@ -14,10 +16,13 @@ import 'features/notes/data/repositories/notes_repository_impl.dart';
 import 'features/notes/domain/repositories/notes_repository.dart';
 import 'features/notes/domain/usecases/create_note_usecase.dart';
 import 'features/notes/domain/usecases/delete_note_usecase.dart';
+import 'features/notes/domain/usecases/delete_reminder_usecase.dart';
 import 'features/notes/domain/usecases/get_notes_usecase.dart';
 import 'features/notes/domain/usecases/search_notes_usecase.dart';
 import 'features/notes/domain/usecases/update_note_usecase.dart';
+import 'features/notes/domain/usecases/update_reminder_usecase.dart';
 import 'features/notes/presentation/cubits/note_cubit/notes_cubit.dart';
+import 'features/notes/presentation/cubits/reminder_cubit/reminder_cubit.dart';
 import 'features/settings/data/datasources/settings_local_data_source.dart';
 import 'features/settings/data/repositories/settings_repository_impl.dart';
 import 'features/settings/domain/repositories/settings_repository.dart';
@@ -83,12 +88,27 @@ void _initNotes() {
     ),
   );
 
+  sl.registerFactory(
+    () => ReminderCubit(
+      saveReminderUsecase: sl(),
+      deleteReminderUsecase: sl(),
+      getRemindersForNoteUsecase: sl(),
+      updateReminderUsecase: sl(),
+    ),
+  );
+
+
+
   // Use cases
   sl.registerLazySingleton(() => GetNotesUseCase(sl()));
   sl.registerLazySingleton(() => CreateNoteUseCase(sl()));
   sl.registerLazySingleton(() => UpdateNoteUseCase(sl()));
   sl.registerLazySingleton(() => DeleteNoteUseCase(sl()));
   sl.registerLazySingleton(() => SearchNotesUseCase(sl()));
+  sl.registerLazySingleton(() => SaveReminderUsecase(sl()));
+  sl.registerLazySingleton(() => DeleteReminderUsecase(sl()));
+  sl.registerLazySingleton(() => GetRemindersForNoteUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateReminderUsecase(sl()));
 
   // Repository
   sl.registerLazySingleton<NotesRepository>(

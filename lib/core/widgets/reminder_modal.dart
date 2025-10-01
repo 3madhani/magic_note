@@ -5,8 +5,7 @@ import '../../../../core/constants/theme_constants.dart';
 import '../../../../core/widgets/glass_container.dart';
 import '../../features/app/cubit/app_cubit.dart';
 import '../../features/notes/domain/entities/reminder.dart';
-import '../../features/notes/presentation/cubits/note_cubit/notes_cubit.dart';
-import '../../features/notes/presentation/cubits/note_cubit/notes_state.dart';
+import '../../features/notes/presentation/cubits/reminder_cubit/reminder_cubit.dart';
 import 'reminder_action_buttons.dart';
 import 'reminder_active_toggle.dart';
 import 'reminder_date_selector.dart';
@@ -15,10 +14,9 @@ import 'reminder_repeat_selector.dart';
 import 'reminder_time_selector.dart';
 
 class ReminderModal extends StatefulWidget {
-  final Reminder? existingReminder;
   final String? noteId;
 
-  const ReminderModal({super.key, this.existingReminder, this.noteId});
+  const ReminderModal({super.key, this.noteId});
 
   @override
   State<ReminderModal> createState() => _ReminderModalState();
@@ -37,23 +35,38 @@ class _ReminderModalState extends State<ReminderModal>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<NotesCubit, NotesState>(
-      listener: _handleNotesStateChange,
-      listenWhen: (previous, current) => previous != current,
-      child: AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, child) {
-          return Container(
-            color: Colors.black.withOpacity(0.5 * _opacityAnimation.value),
-            child: Center(
-              child: Transform.scale(
-                scale: _scaleAnimation.value,
-                child: _buildModalContent(context),
+    return BlocConsumer<ReminderCubit, ReminderState>(
+      listener: (context, state) {
+        if (state is RemindersError) {
+          _showSnackBar(state.message, Colors.red);
+        } else if (state is ReminderOperationSuccess) {
+          _showSnackBar(state.message, ThemeConstants.goldenColor);
+        }
+      },
+      builder: (context, state) {
+        return AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return Container(
+              color: Colors.black.withOpacity(0.5 * _opacityAnimation.value),
+              child: Center(
+                child: Transform.scale(
+                  scale: _scaleAnimation.value,
+                  child: _buildModalContent(
+                    context,
+                    existingReminder:
+                        state is RemindersLoaded && state.reminders.isNotEmpty
+                        ? state.reminders.firstWhere(
+                            (r) => r.noteId == widget.noteId,
+                          )
+                        : null,
+                  ),
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -66,6 +79,9 @@ class _ReminderModalState extends State<ReminderModal>
   @override
   void initState() {
     super.initState();
+    if (widget.noteId != null) {
+      context.read<ReminderCubit>().loadReminders(widget.noteId!);
+    }
     _initializeData();
     _setupAnimations();
   }
@@ -73,7 +89,10 @@ class _ReminderModalState extends State<ReminderModal>
   /// -------------------------------
   /// UI
   /// -------------------------------
-  Widget _buildModalContent(BuildContext context) {
+  Widget _buildModalContent(
+    BuildContext context, {
+    Reminder? existingReminder,
+  }) {
     return Container(
       margin: const EdgeInsets.all(24),
       constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
@@ -84,37 +103,37 @@ class _ReminderModalState extends State<ReminderModal>
             mainAxisSize: MainAxisSize.min,
             children: [
               ReminderModalHeader(
-                isEditing: widget.existingReminder != null,
-                isActive: _isActive,
+                isEditing: existingReminder != null,
+                isActive: existingReminder?.isActive ?? _isActive,
                 onClose: _closeModal,
               ),
               const SizedBox(height: 24),
               ReminderActiveToggle(
-                isActive: _isActive,
+                isActive: existingReminder?.isActive ?? _isActive,
                 onChanged: (value) => setState(() => _isActive = value),
               ),
               const SizedBox(height: 20),
               ReminderDateSelector(
-                selectedDate: _selectedDate,
+                selectedDate: existingReminder?.date ?? _selectedDate,
                 onDateChanged: (date) => setState(() => _selectedDate = date),
               ),
               const SizedBox(height: 20),
               ReminderTimeSelector(
-                selectedTime: _selectedTime,
+                selectedTime: existingReminder?.time ?? _selectedTime,
                 onTimeChanged: (time) => setState(() => _selectedTime = time),
               ),
               const SizedBox(height: 20),
               ReminderRepeatSelector(
-                selectedRepeat: _selectedRepeat,
+                selectedRepeat: existingReminder?.repeat ?? _selectedRepeat,
                 onRepeatChanged: (repeat) =>
                     setState(() => _selectedRepeat = repeat),
               ),
               const SizedBox(height: 32),
               ReminderActionButtons(
-                isEditing: widget.existingReminder != null,
+                isEditing: existingReminder != null,
                 onSave: _saveReminder,
-                onDelete: widget.existingReminder != null
-                    ? _deleteReminder
+                onDelete: existingReminder != null
+                    ? () => _deleteReminder(existingReminder: existingReminder)
                     : null,
                 onCancel: _closeModal,
               ),
@@ -133,31 +152,32 @@ class _ReminderModalState extends State<ReminderModal>
     });
   }
 
-  void _confirmDelete() {
-    _showSnackBar('Reminder deleted successfully', Colors.red);
+  void _confirmDelete({Reminder? existingReminder}) {
+    if (existingReminder == null) return;
+    context.read<ReminderCubit>().deleteReminder(existingReminder);
     _closeModal();
   }
 
   /// -------------------------------
   /// Helpers
   /// -------------------------------
-  Reminder _createReminderEntity() {
+  Reminder _createReminderEntity({Reminder? existingReminder}) {
     return Reminder(
       id:
-          widget.existingReminder?.id ??
+          existingReminder?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
       noteId: widget.noteId!,
       date: _selectedDate,
       time: _selectedTime,
       repeat: _selectedRepeat,
       isActive: _isActive,
-      createdAt: widget.existingReminder?.createdAt ?? DateTime.now(),
+      createdAt: existingReminder?.createdAt ?? DateTime.now(),
     );
   }
 
-  void _deleteReminder() {
-    if (widget.existingReminder == null) return;
-    _showDeleteConfirmationDialog();
+  void _deleteReminder({Reminder? existingReminder}) {
+    if (existingReminder == null) return;
+    _showDeleteConfirmationDialog(existingReminder: existingReminder);
   }
 
   String _formatReminderText(Reminder reminder) {
@@ -169,27 +189,18 @@ class _ReminderModalState extends State<ReminderModal>
     return '$dateStr at $timeStr$repeatStr';
   }
 
-  void _handleNotesStateChange(BuildContext context, NotesState state) {
-    if (state is NoteOperationSuccess) {
-      _closeModal();
-      _showSnackBar(state.message, ThemeConstants.goldenColor);
-    } else if (state is NotesError) {
-      _showSnackBar(state.message, Colors.red);
-    } else if (state is NoteCreationSuccess) {}
-  }
-
   /// -------------------------------
   /// State Handling
   /// -------------------------------
-  void _initializeData() {
-    if (widget.existingReminder != null) {
-      final r = widget.existingReminder!;
+  void _initializeData({Reminder? existingReminder}) {
+    if (existingReminder != null) {
+      final r = existingReminder;
       _selectedDate = r.date;
       _selectedTime = r.time;
       _selectedRepeat = r.repeat;
       _isActive = r.isActive;
     } else {
-      _selectedDate = DateTime.now().add(const Duration(hours: 1));
+      _selectedDate = DateTime.now();
       _selectedTime = TimeOfDay.fromDateTime(_selectedDate);
       _selectedRepeat = RepeatOption.none;
       _isActive = true;
@@ -209,6 +220,7 @@ class _ReminderModalState extends State<ReminderModal>
     }
 
     final reminder = _createReminderEntity();
+    context.read<ReminderCubit>().addReminder(reminder);
     final message = _isActive
         ? 'Reminder set for ${_formatReminderText(reminder)}'
         : 'Reminder saved but disabled';
@@ -234,7 +246,7 @@ class _ReminderModalState extends State<ReminderModal>
     _animationController.forward();
   }
 
-  void _showDeleteConfirmationDialog() {
+  void _showDeleteConfirmationDialog({Reminder? existingReminder}) {
     final theme = Theme.of(context);
     showDialog(
       context: context,
@@ -262,7 +274,7 @@ class _ReminderModalState extends State<ReminderModal>
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              _confirmDelete();
+              _confirmDelete(existingReminder: existingReminder);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

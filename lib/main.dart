@@ -7,6 +7,7 @@ import 'features/app/cubit/app_cubit.dart';
 import 'features/app/pages/app_page.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/notes/presentation/cubits/note_cubit/notes_cubit.dart';
+import 'features/notes/presentation/cubits/reminder_cubit/reminder_cubit.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 import 'injection_container.dart' as di;
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => di.sl<NotesCubit>()),
         BlocProvider(create: (_) => di.sl<SettingsCubit>()..loadSettings()),
         BlocProvider(create: (_) => AppCubit()),
+        BlocProvider(create: (_) => di.sl<ReminderCubit>()),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, settingsState) {
