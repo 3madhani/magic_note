@@ -27,6 +27,7 @@ class _ReminderModalState extends State<ReminderModal>
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
   late RepeatOption _selectedRepeat;
+  late Reminder? _reminder;
   bool _isActive = true;
 
   late final AnimationController _animationController;
@@ -41,6 +42,27 @@ class _ReminderModalState extends State<ReminderModal>
           _showSnackBar(state.message, Colors.red);
         } else if (state is ReminderOperationSuccess) {
           _showSnackBar(state.message, ThemeConstants.goldenColor);
+        }
+        if (state is RemindersLoaded) {
+          if (state.reminders.isNotEmpty) {
+            _reminder = state.reminders.firstWhere(
+              (r) => r.noteId == widget.noteId,
+            );
+            _isActive = state.reminders
+                .firstWhere((r) => r.noteId == widget.noteId)
+                .isActive;
+            _selectedDate = state.reminders
+                .firstWhere((r) => r.noteId == widget.noteId)
+                .date;
+            _selectedTime = state.reminders
+                .firstWhere((r) => r.noteId == widget.noteId)
+                .time;
+            _selectedRepeat = state.reminders
+                .firstWhere((r) => r.noteId == widget.noteId)
+                .repeat;
+          } else {
+            _reminder = null;
+          }
         }
       },
       builder: (context, state) {
@@ -104,27 +126,27 @@ class _ReminderModalState extends State<ReminderModal>
             children: [
               ReminderModalHeader(
                 isEditing: existingReminder != null,
-                isActive: existingReminder?.isActive ?? _isActive,
+                isActive: _isActive,
                 onClose: _closeModal,
               ),
               const SizedBox(height: 24),
               ReminderActiveToggle(
-                isActive: existingReminder?.isActive ?? _isActive,
+                isActive: _isActive,
                 onChanged: (value) => setState(() => _isActive = value),
               ),
               const SizedBox(height: 20),
               ReminderDateSelector(
-                selectedDate: existingReminder?.date ?? _selectedDate,
+                selectedDate: _selectedDate,
                 onDateChanged: (date) => setState(() => _selectedDate = date),
               ),
               const SizedBox(height: 20),
               ReminderTimeSelector(
-                selectedTime: existingReminder?.time ?? _selectedTime,
+                selectedTime: _selectedTime,
                 onTimeChanged: (time) => setState(() => _selectedTime = time),
               ),
               const SizedBox(height: 20),
               ReminderRepeatSelector(
-                selectedRepeat: existingReminder?.repeat ?? _selectedRepeat,
+                selectedRepeat: _selectedRepeat,
                 onRepeatChanged: (repeat) =>
                     setState(() => _selectedRepeat = repeat),
               ),
@@ -218,9 +240,14 @@ class _ReminderModalState extends State<ReminderModal>
       );
       return;
     }
-
     final reminder = _createReminderEntity();
-    context.read<ReminderCubit>().addReminder(reminder);
+
+    if (_reminder != null) {
+      context.read<ReminderCubit>().updateReminder(reminder);
+    } else {
+      context.read<ReminderCubit>().addReminder(reminder);
+    }
+
     final message = _isActive
         ? 'Reminder set for ${_formatReminderText(reminder)}'
         : 'Reminder saved but disabled';

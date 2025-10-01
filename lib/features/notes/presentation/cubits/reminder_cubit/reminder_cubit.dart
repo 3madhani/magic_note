@@ -61,7 +61,7 @@ class ReminderCubit extends Cubit<ReminderState> {
   Future<void> updateReminder(Reminder reminder) async {
     try {
       await updateReminderUsecase(reminder);
-      final index = reminders.indexWhere((r) => r.id == reminder.id);
+      final index = reminders.indexWhere((r) => r.noteId == reminder.noteId);
       if (index != -1) {
         reminders[index] = reminder;
         emit(RemindersLoaded(List.from(reminders)));

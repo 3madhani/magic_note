@@ -195,7 +195,7 @@ class NotesLocalDataSourceImpl implements NotesLocalDataSource {
   Future<void> updateReminder(ReminderModel reminder) async {
     try {
       final reminders = await _getAllReminders();
-      final index = reminders.indexWhere((r) => r.id == reminder.id);
+      final index = reminders.indexWhere((r) => r.noteId == reminder.noteId);
       if (index != -1) {
         reminders[index] = reminder;
         await _saveReminders(reminders);

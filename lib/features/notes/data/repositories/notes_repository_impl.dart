@@ -70,7 +70,7 @@ class NotesRepositoryImpl implements NotesRepository {
 
   @override
   Future<void> updateReminder(Reminder reminder) async {
-    // Implementation would depend on data source having update method
-    throw UnimplementedError();
+    final reminderModel = ReminderModel.fromEntity(reminder);
+    await localDataSource.updateReminder(reminderModel);
   }
 }
