@@ -5,11 +5,13 @@ import '../../../../core/constants/theme_constants.dart';
 class ReminderTimeSelector extends StatelessWidget {
   final TimeOfDay selectedTime;
   final ValueChanged<TimeOfDay> onTimeChanged;
+  final Color? color;
 
   const ReminderTimeSelector({
     super.key,
     required this.selectedTime,
     required this.onTimeChanged,
+    this.color,
   });
 
   @override
@@ -27,7 +29,7 @@ class ReminderTimeSelector extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         GestureDetector(
-          onTap: () => _selectTime(context),
+          onTap: () => _selectTime(context, color),
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -63,16 +65,16 @@ class ReminderTimeSelector extends StatelessWidget {
     );
   }
 
-  Future<void> _selectTime(BuildContext context) async {
+  Future<void> _selectTime(BuildContext context, Color? color) async {
     final time = await showTimePicker(
       context: context,
       initialTime: selectedTime,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(
-              context,
-            ).colorScheme.copyWith(primary: ThemeConstants.goldenColor),
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: color ?? ThemeConstants.goldenColor,
+            ),
           ),
           child: child!,
         );
