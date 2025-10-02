@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic_note/core/constants/theme_constants.dart';
+import 'package:magic_note/core/widgets/show_snack_bar.dart';
 
 import '../cubits/note_cubit/notes_cubit.dart';
 import '../cubits/note_cubit/notes_state.dart';
@@ -27,35 +28,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark
         ? true
         : false;
+    var darkBackground = [
+      ThemeConstants.darkBackground.withOpacity(0.6),
+      ThemeConstants.darkBackground,
+    ];
+    var lightBackground = [const Color(0xFF667eea), const Color(0xFF764ba2)];
+    var linearGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDarkMode ? darkBackground : lightBackground,
+    );
     return BlocConsumer<NotesCubit, NotesState>(
       listenWhen: (previous, current) => previous != current,
       listener: (context, state) {
         if (state is NoteOperationSuccess) {
-          final snackBar = SnackBar(
-            shape: ShapeBorder.lerp(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  width: 1,
-                ),
-              ),
-              0.5,
-            ),
-            backgroundColor: ThemeConstants.goldenColor,
-            behavior: SnackBarBehavior.floating,
-            content: Text(state.message),
-            duration: const Duration(seconds: 2),
+          showSnackBar(
+            message: state.message,
+            color: ThemeConstants.magicalBlue,
+            context: context,
           );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (state is NotesError) {
-          final snackBar = SnackBar(
-            content: Text(state.message),
-            duration: const Duration(seconds: 2),
-            backgroundColor: Theme.of(context).colorScheme.error,
+          showSnackBar(
+            message: state.message,
+            color: ThemeConstants.magicalBlue,
+            context: context,
           );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       },
       builder: (context, state) {
@@ -79,18 +76,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         if (state is NotesLoaded) {
           return Scaffold(
             body: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDarkMode
-                      ? [
-                          ThemeConstants.darkBackground,
-                          ThemeConstants.darkBackground.withOpacity(0.6),
-                        ]
-                      : [const Color(0xFF667eea), const Color(0xFF764ba2)],
-                ),
-              ),
+              decoration: BoxDecoration(gradient: linearGradient),
               child: Stack(
                 children: [
                   SafeArea(

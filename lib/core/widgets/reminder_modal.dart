@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/theme_constants.dart';
 import '../../../../core/widgets/glass_container.dart';
 import '../../features/app/cubit/app_cubit.dart';
 import '../../features/notes/domain/entities/reminder.dart';
@@ -12,11 +11,21 @@ import 'reminder_date_selector.dart';
 import 'reminder_model_header.dart';
 import 'reminder_repeat_selector.dart';
 import 'reminder_time_selector.dart';
+import 'show_snack_bar.dart';
 
 class ReminderModal extends StatefulWidget {
   final String? noteId;
+  final String? title;
+  final String? content;
+  final LinearGradient color;
 
-  const ReminderModal({super.key, this.noteId});
+  const ReminderModal({
+    super.key,
+    this.noteId,
+    this.title,
+    this.content,
+    required this.color,
+  });
 
   @override
   State<ReminderModal> createState() => _ReminderModalState();
@@ -39,9 +48,17 @@ class _ReminderModalState extends State<ReminderModal>
     return BlocConsumer<ReminderCubit, ReminderState>(
       listener: (context, state) {
         if (state is RemindersError) {
-          _showSnackBar(state.message, Colors.red);
+          showSnackBar(
+            message: state.message,
+            context: context,
+            color: widget.color,
+          );
         } else if (state is ReminderOperationSuccess) {
-          _showSnackBar(state.message, ThemeConstants.goldenColor);
+          showSnackBar(
+            message: state.message,
+            context: context,
+            color: widget.color,
+          );
         }
         if (state is RemindersLoaded) {
           if (state.reminders.isNotEmpty) {
@@ -234,25 +251,34 @@ class _ReminderModalState extends State<ReminderModal>
   /// -------------------------------
   void _saveReminder() {
     if (widget.noteId == null) {
-      _showSnackBar(
-        'Please save the note first before setting a reminder',
-        Colors.orange,
+      showSnackBar(
+        message: 'Please save the note first before setting a reminder',
+        context: context,
+        color: widget.color,
       );
       return;
     }
     final reminder = _createReminderEntity();
 
     if (_reminder != null) {
-      context.read<ReminderCubit>().updateReminder(reminder);
+      context.read<ReminderCubit>().updateReminder(
+        reminder,
+        widget.title,
+        widget.content,
+      );
     } else {
-      context.read<ReminderCubit>().addReminder(reminder);
+      context.read<ReminderCubit>().addReminder(
+        reminder,
+        widget.title,
+        widget.content,
+      );
     }
 
     final message = _isActive
         ? 'Reminder set for ${_formatReminderText(reminder)}'
         : 'Reminder saved but disabled';
 
-    _showSnackBar(message, ThemeConstants.goldenColor);
+    showSnackBar(message: message, color: widget.color, context: context);
     _closeModal();
   }
 
@@ -315,18 +341,6 @@ class _ReminderModalState extends State<ReminderModal>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showSnackBar(String message, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 3),
-        dismissDirection: DismissDirection.down,
-        content: Text(message),
-        backgroundColor: color,
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }

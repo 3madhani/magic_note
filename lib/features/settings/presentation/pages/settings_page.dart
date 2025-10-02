@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/constants/theme_constants.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../../app/cubit/app_state.dart';
 import '../cubit/settings_cubit.dart';
@@ -29,7 +30,10 @@ class SettingsPage extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDarkMode
-                ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
+                ? [
+                    ThemeConstants.darkBackground.withOpacity(0.6),
+                    ThemeConstants.darkBackground,
+                  ]
                 : [const Color(0xFF667eea), const Color(0xFF764ba2)],
           ),
         ),

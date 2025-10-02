@@ -89,40 +89,40 @@ class ThemeConstants {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        Color.fromARGB(255, 70, 130, 180),
         Color.fromARGB(255, 100, 149, 237),
+        Color.fromARGB(255, 70, 130, 180),
       ],
     ),
 
     'yellow': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [ThemeConstants.goldenDark, ThemeConstants.goldenColor],
+      colors: [ThemeConstants.goldenColor, ThemeConstants.goldenDark],
     ),
     'blue': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFF1e3a8a), Color(0xFF1e40af)],
+      colors: [Color(0xFF1e40af), Color(0xFF1e3a8a)],
     ),
     'green': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFF14532d), Color(0xFF166534)],
+      colors: [Color(0xFF166534), Color(0xFF14532d)],
     ),
     'purple': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFF581c87), Color(0xFF6b21a8)],
+      colors: [Color(0xFF6b21a8), Color(0xFF581c87)],
     ),
     'pink': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFF831843), Color(0xFF9d174d)],
+      colors: [Color(0xFF9d174d), Color(0xFF831843)],
     ),
     'orange': LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFF9a3412), Color(0xFFc2410c)],
+      colors: [Color(0xFFc2410c), Color(0xFF9a3412)],
     ),
   };
 }

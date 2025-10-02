@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:magic_note/core/widgets/show_snack_bar.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/theme_constants.dart';
@@ -37,12 +38,12 @@ class _CreateNotePageState extends State<CreateNotePage> {
           return BlocListener<NotesCubit, NotesState>(
             listener: (context, state) {
               if (state is NoteOperationSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: ThemeConstants.goldenColor,
-                    behavior: SnackBarBehavior.floating,
-                  ),
+                showSnackBar(
+                  message: state.message,
+                  color: isDarkMode
+                      ? ThemeConstants.darkNoteColors[_selectedColor]!
+                      : ThemeConstants.noteColors[_selectedColor]!,
+                  context: context,
                 );
               }
             },
@@ -161,7 +162,14 @@ class _CreateNotePageState extends State<CreateNotePage> {
                     ),
 
                     if (appState.isReminderModalOpen)
-                      ReminderModal(noteId: noteId),
+                      ReminderModal(
+                        noteId: noteId,
+                        title: _titleController.text,
+                        content: _contentController.text,
+                        color: isDarkMode
+                            ? ThemeConstants.darkNoteColors[_selectedColor]!
+                            : ThemeConstants.noteColors[_selectedColor]!,
+                      ),
                   ],
                 ),
               ),
@@ -193,12 +201,12 @@ class _CreateNotePageState extends State<CreateNotePage> {
         context.read<AppCubit>().openReminderModal();
         break;
       case 'share':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Share feature coming soon!'),
-            backgroundColor: ThemeConstants.goldenColor,
-            behavior: SnackBarBehavior.floating,
-          ),
+        showSnackBar(
+          message: 'Share feature coming soon!',
+          color: Theme.of(context).brightness == Brightness.dark
+              ? ThemeConstants.darkNoteColors[_selectedColor]!
+              : ThemeConstants.noteColors[_selectedColor]!,
+          context: context,
         );
         break;
     }

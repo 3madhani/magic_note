@@ -16,6 +16,8 @@ import 'injection_container.dart' as di;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService.init();
+  await NotificationService.requestNotificationPermission();
+  await NotificationService.requestBatteryOptimizationException();
   await di.init();
   runApp(const MyApp());
 }

@@ -22,7 +22,7 @@ class AnimatedBackground extends StatelessWidget {
           right: 20,
           child: AnimatedBuilder(
             animation: floatingController,
-            builder: (_, __) => Transform.translate(
+            builder: (_, _) => Transform.translate(
               offset: Offset(0, floatingController.value * 20),
               child:
                   Container(

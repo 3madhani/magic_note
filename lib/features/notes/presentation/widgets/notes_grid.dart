@@ -21,8 +21,9 @@ class NotesGrid extends StatelessWidget {
           crossAxisCount: 2,
         ),
         physics: const BouncingScrollPhysics(),
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
+        mainAxisSpacing: 26,
+        crossAxisSpacing: 26,
+
         itemCount: notes.length,
         itemBuilder: (context, index) {
           final note = notes[index];

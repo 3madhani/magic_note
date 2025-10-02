@@ -5,6 +5,7 @@ import 'package:magic_note/features/notes/domain/entities/note.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/theme_constants.dart';
 import '../../../../core/widgets/reminder_modal.dart';
+import '../../../../core/widgets/show_snack_bar.dart';
 import '../../../app/cubit/app_cubit.dart';
 import '../../../app/cubit/app_state.dart';
 import '../cubits/note_cubit/notes_cubit.dart';
@@ -30,80 +31,70 @@ class _EditNotePageState extends State<EditNotePage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDarkMode
-                ? [const Color(0xFF0f0f23), const Color(0xFF1a1a2e)]
-                : [const Color(0xFF667eea), const Color(0xFF764ba2)],
-          ),
+          gradient: isDarkMode
+              ? ThemeConstants.darkNoteColors[_selectedColor]
+              : ThemeConstants.noteColors[_selectedColor],
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                ThemeConstants.noteColors[_selectedColor]!.colors.first,
-                ThemeConstants.darkNoteColors[_selectedColor]!.colors.first,
-              ],
-            ),
-          ),
-          child: BlocBuilder<AppCubit, AppState>(
-            builder: (context, appState) {
-              return Stack(
-                children: [
-                  SafeArea(
-                    child: Column(
-                      children: [
-                        NoteEditorHeader(
-                          title: "Edit Note",
-                          onSave: _handleSave,
-                          onMenuAction: _handleMenuAction,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                NoteCustomization(
-                                  selectedColor: _selectedColor,
-                                  selectedCategory: _selectedCategory,
-                                  onColorChanged: (c) =>
-                                      setState(() => _selectedColor = c),
-                                  onCategoryChanged: (cat) =>
-                                      setState(() => _selectedCategory = cat),
-                                ),
-                                const SizedBox(height: 24),
-                                NoteTitleField(
-                                  controller: _titleController,
+        child: BlocBuilder<AppCubit, AppState>(
+          builder: (context, appState) {
+            return Stack(
+              children: [
+                SafeArea(
+                  child: Column(
+                    children: [
+                      NoteEditorHeader(
+                        title: "Edit Note",
+                        onSave: _handleSave,
+                        onMenuAction: _handleMenuAction,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              NoteCustomization(
+                                selectedColor: _selectedColor,
+                                selectedCategory: _selectedCategory,
+                                onColorChanged: (c) =>
+                                    setState(() => _selectedColor = c),
+                                onCategoryChanged: (cat) =>
+                                    setState(() => _selectedCategory = cat),
+                              ),
+                              const SizedBox(height: 24),
+                              NoteTitleField(
+                                controller: _titleController,
+                                selectedColor: _selectedColor,
+                              ),
+                              const SizedBox(height: 16),
+                              Expanded(
+                                child: NoteContentField(
+                                  controller: _contentController,
                                   selectedColor: _selectedColor,
                                 ),
-                                const SizedBox(height: 16),
-                                Expanded(
-                                  child: NoteContentField(
-                                    controller: _contentController,
-                                    selectedColor: _selectedColor,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
 
-                  if (appState.isReminderModalOpen)
-                    ReminderModal(noteId: widget.note.id),
-                ],
-              );
-            },
-          ),
+                if (appState.isReminderModalOpen)
+                  ReminderModal(
+                    noteId: widget.note.id,
+                    title: widget.note.title,
+                    content: widget.note.content,
+                    color: isDarkMode
+                        ? ThemeConstants.darkNoteColors[_selectedColor]!
+                        : ThemeConstants.noteColors[_selectedColor]!,
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -132,12 +123,12 @@ class _EditNotePageState extends State<EditNotePage> {
         context.read<AppCubit>().openReminderModal();
         break;
       case 'share':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Share feature coming soon!'),
-            backgroundColor: ThemeConstants.goldenColor,
-            behavior: SnackBarBehavior.floating,
-          ),
+        showSnackBar(
+          message: 'Share feature coming soon!',
+          color: Theme.of(context).brightness == Brightness.dark
+              ? ThemeConstants.darkNoteColors[_selectedColor]!
+              : ThemeConstants.noteColors[_selectedColor]!,
+          context: context,
         );
         break;
     }

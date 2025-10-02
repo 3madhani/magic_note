@@ -25,7 +25,11 @@ class ReminderCubit extends Cubit<ReminderState> {
     required this.deleteReminderUsecase,
   }) : super(ReminderInitial());
 
-  Future<void> addReminder(Reminder reminder) async {
+  Future<void> addReminder(
+    Reminder reminder,
+    String? title,
+    String? content,
+  ) async {
     try {
       await saveReminderUsecase(reminder);
       reminders.add(reminder);
@@ -33,18 +37,17 @@ class ReminderCubit extends Cubit<ReminderState> {
       emit(ReminderOperationSuccess('Reminder added successfully 🎉'));
 
       if (reminder.isActive) {
-        await _scheduleNotification(reminder);
+        await _scheduleNotification(reminder, title, content);
       }
     } catch (e) {
+      print("addReminder error: ${e.toString()}");
       emit(RemindersError('Failed to add reminder: ${e.toString()}'));
     }
   }
 
   Future<void> deleteReminder(Reminder reminder) async {
     try {
-      await deleteReminderUsecase(
-        DeleteReminderUsecaseParams(id: reminder.noteId),
-      );
+      await deleteReminderUsecase(DeleteReminderUsecaseParams(id: reminder.id));
       reminders.removeWhere((r) => r.id == reminder.id);
       emit(RemindersLoaded(List.from(reminders)));
       emit(ReminderOperationSuccess('Reminder deleted successfully 🗑️'));
@@ -68,17 +71,21 @@ class ReminderCubit extends Cubit<ReminderState> {
     }
   }
 
-  Future<void> updateReminder(Reminder reminder) async {
+  Future<void> updateReminder(
+    Reminder reminder,
+    String? title,
+    String? content,
+  ) async {
     try {
       await updateReminderUsecase(reminder);
-      final index = reminders.indexWhere((r) => r.id == reminder.id);
+      final index = reminders.indexWhere((r) => r.noteId == reminder.noteId);
       if (index != -1) {
         reminders[index] = reminder;
         emit(RemindersLoaded(List.from(reminders)));
         emit(ReminderOperationSuccess('Reminder updated successfully ✨'));
 
         if (reminder.isActive) {
-          await _scheduleNotification(reminder);
+          await _scheduleNotification(reminder, title, content);
         } else {
           await NotificationService.cancel(reminder.id.hashCode);
         }
@@ -90,7 +97,11 @@ class ReminderCubit extends Cubit<ReminderState> {
     }
   }
 
-  Future<void> _scheduleNotification(Reminder reminder) async {
+  Future<void> _scheduleNotification(
+    Reminder reminder,
+    String? title,
+    String? content,
+  ) async {
     RepeatInterval? repeatInterval;
     switch (reminder.repeat) {
       case RepeatOption.daily:
@@ -110,10 +121,11 @@ class ReminderCubit extends Cubit<ReminderState> {
 
     await NotificationService.scheduleReminder(
       id: reminder.id.hashCode,
-      title: "Reminder for note ${reminder.noteId}",
-      body: "It's time for your reminder!",
+      title: title ?? "No title",
+      body: content ?? "No content",
       dateTime: reminder.scheduledDateTime,
-      repeatInterval: repeatInterval,
+      repeatDaily: repeatInterval == RepeatInterval.daily,
+      repeatWeekly: repeatInterval == RepeatInterval.weekly,
     );
   }
 }
