@@ -94,7 +94,7 @@ class NotesLocalDataSourceImpl implements NotesLocalDataSource {
   Future<void> deleteReminder(String id) async {
     try {
       final reminders = await _getAllReminders();
-      reminders.removeWhere((reminder) => reminder.id == id);
+      reminders.removeWhere((reminder) => reminder.noteId == id);
       await _saveReminders(reminders);
     } catch (e) {
       throw CacheException('Failed to delete reminder: $e');

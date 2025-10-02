@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-enum RepeatOption { none, daily, weekly, monthly }
-
 class Reminder {
   final String id;
   final String noteId;
@@ -52,5 +50,13 @@ class Reminder {
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
     );
+  }
+}
+
+enum RepeatOption { none, daily, weekly, monthly }
+
+extension ReminderDateTime on Reminder {
+  DateTime get scheduledDateTime {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 }

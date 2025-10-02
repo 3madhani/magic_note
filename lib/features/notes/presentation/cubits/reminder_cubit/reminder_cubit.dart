@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../../../../core/services/notification_service.dart';
 import '../../../domain/entities/reminder.dart';
 import '../../../domain/usecases/delete_reminder_usecase.dart';
 import '../../../domain/usecases/get_reminders_for_note_usecase.dart';
@@ -29,6 +31,10 @@ class ReminderCubit extends Cubit<ReminderState> {
       reminders.add(reminder);
       emit(RemindersLoaded(List.from(reminders)));
       emit(ReminderOperationSuccess('Reminder added successfully 🎉'));
+
+      if (reminder.isActive) {
+        await _scheduleNotification(reminder);
+      }
     } catch (e) {
       emit(RemindersError('Failed to add reminder: ${e.toString()}'));
     }
@@ -36,10 +42,14 @@ class ReminderCubit extends Cubit<ReminderState> {
 
   Future<void> deleteReminder(Reminder reminder) async {
     try {
-      await deleteReminderUsecase(DeleteReminderUsecaseParams(id: reminder.id));
+      await deleteReminderUsecase(
+        DeleteReminderUsecaseParams(id: reminder.noteId),
+      );
       reminders.removeWhere((r) => r.id == reminder.id);
       emit(RemindersLoaded(List.from(reminders)));
       emit(ReminderOperationSuccess('Reminder deleted successfully 🗑️'));
+
+      await NotificationService.cancel(reminder.id.hashCode);
     } catch (e) {
       emit(RemindersError('Failed to delete reminder: ${e.toString()}'));
     }
@@ -61,16 +71,49 @@ class ReminderCubit extends Cubit<ReminderState> {
   Future<void> updateReminder(Reminder reminder) async {
     try {
       await updateReminderUsecase(reminder);
-      final index = reminders.indexWhere((r) => r.noteId == reminder.noteId);
+      final index = reminders.indexWhere((r) => r.id == reminder.id);
       if (index != -1) {
         reminders[index] = reminder;
         emit(RemindersLoaded(List.from(reminders)));
         emit(ReminderOperationSuccess('Reminder updated successfully ✨'));
+
+        if (reminder.isActive) {
+          await _scheduleNotification(reminder);
+        } else {
+          await NotificationService.cancel(reminder.id.hashCode);
+        }
       } else {
         emit(RemindersError('Reminder not found'));
       }
     } catch (e) {
       emit(RemindersError('Failed to update reminder: ${e.toString()}'));
     }
+  }
+
+  Future<void> _scheduleNotification(Reminder reminder) async {
+    RepeatInterval? repeatInterval;
+    switch (reminder.repeat) {
+      case RepeatOption.daily:
+        repeatInterval = RepeatInterval.daily;
+        break;
+      case RepeatOption.weekly:
+        repeatInterval = RepeatInterval.weekly;
+        break;
+      case RepeatOption.monthly:
+        // flutter_local_notifications has no direct monthly, handle manually later
+        repeatInterval = null;
+        break;
+      case RepeatOption.none:
+        repeatInterval = null;
+        break;
+    }
+
+    await NotificationService.scheduleReminder(
+      id: reminder.id.hashCode,
+      title: "Reminder for note ${reminder.noteId}",
+      body: "It's time for your reminder!",
+      dateTime: reminder.scheduledDateTime,
+      repeatInterval: repeatInterval,
+    );
   }
 }
